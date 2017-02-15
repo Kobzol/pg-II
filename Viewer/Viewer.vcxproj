@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{331D8E21-EBFB-44D9-ADF2-751A8BEA3631}</ProjectGuid>
+    <RootNamespace>World3D</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>Viewer</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\common\packages.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\common\packages.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\common\packages.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\common\packages.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.exe</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../VisualizationCore;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.exe</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../VisualizationCore;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.exe</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../VisualizationCore;</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.exe</TargetExt>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../VisualizationCore;</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>./;$(COMMON);$(FREEGLUT_INC);$(GLEW_INC);$(GLM);$(FREEIMAGE_INC);$(UTILS);$(FREETYPE_INC);$(FREETYPE_INC)\freetype;$(ANTTWEAKBAR_INC);$(PTHREAD);./CoreHeaders/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;freetype271.lib;freeimage.lib;opengl32.lib;glew32.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(FREETYPE_LIB);$(ANTTWEAKBAR_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcd.lib;libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>rem copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)" 
+copy "$(FREEGLUT_BIN)\*.dll" "$(OutDir)" 
+copy "$(GLEW_BIN)\*.dll" "$(OutDir)" 
+copy "$(PTHREAD)\*.dll" "$(OutDir)"
+copy "$(FREEIMAGE_BIN)\*.dll" "$(OutDir)"
+copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;glew32.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>./;$(COMMON);$(FREEGLUT_INC);$(GLEW_INC);$(GLM);$(FREEIMAGE_INC);$(UTILS);$(FREETYPE_INC);$(FREETYPE_INC)\freetype;$(ANTTWEAKBAR_INC);$(PTHREAD);./CoreHeaders/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;freetype271.lib;freeimage64.lib;glew64.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(FREETYPE_LIB);$(ANTTWEAKBAR_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcd.lib;libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <PostBuildEvent>
+      <Command>rem copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)" 
+copy "$(FREEGLUT_BIN)\*.dll" "$(OutDir)" 
+copy "$(GLEW_BIN)\*.dll" "$(OutDir)" 
+copy "$(PTHREAD)\*.dll" "$(OutDir)"
+copy "$(FREEIMAGE_BIN)\*.dll" "$(OutDir)"
+copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;glew64.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <AdditionalIncludeDirectories>./;$(COMMON);$(FREEGLUT_INC);$(GLEW_INC);$(GLM);$(FREEIMAGE_INC);$(UTILS);$(FREETYPE_INC);$(FREETYPE_INC)\freetype;$(ANTTWEAKBAR_INC);$(PTHREAD);./CoreHeaders/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;freetype271.lib;freeimage.lib;opengl32.lib;glew32.lib;AntTweakBar.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(FREETYPE_LIB);$(ANTTWEAKBAR_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcd.lib;libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>rem copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)" 
+copy "$(FREEGLUT_BIN)\*.dll" "$(OutDir)" 
+copy "$(GLEW_BIN)\*.dll" "$(OutDir)" 
+copy "$(PTHREAD)\*.dll" "$(OutDir)"
+copy "$(FREEIMAGE_BIN)\*.dll" "$(OutDir)"
+copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;glew32.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <AdditionalIncludeDirectories>./;$(COMMON);$(FREEGLUT_INC);$(GLEW_INC);$(GLM);$(FREEIMAGE_INC);$(UTILS);$(FREETYPE_INC);$(FREETYPE_INC)\freetype;$(ANTTWEAKBAR_INC);$(PTHREAD);./CoreHeaders/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;freetype271.lib;freeimage64.lib;glew64.lib;AntTweakBar64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(FREETYPE_LIB);$(ANTTWEAKBAR_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcd.lib;libc.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <PostBuildEvent>
+      <Command>rem copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)" 
+copy "$(FREEGLUT_BIN)\*.dll" "$(OutDir)" 
+copy "$(GLEW_BIN)\*.dll" "$(OutDir)" 
+copy "$(PTHREAD)\*.dll" "$(OutDir)"
+copy "$(FREEIMAGE_BIN)\*.dll" "$(OutDir)"
+copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>pthreadVC2.lib;freeglut.lib;glew64.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(FREEGLUT_LIB);$(GLEW_LIB);$(FREEIMAGE_LIB);$(PTHREAD);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="demos\demo2.cpp" />
+    <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="program.cpp" />
+    <ClCompile Include="sceneManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
+    <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
+    <ClInclude Include="CoreHeaders\boundingBox.h" />
+    <ClInclude Include="CoreHeaders\bufferObject.h" />
+    <ClInclude Include="CoreHeaders\camera.h" />
+    <ClInclude Include="CoreHeaders\eai.h" />
+    <ClInclude Include="CoreHeaders\entity.h" />
+    <ClInclude Include="CoreHeaders\entity_Cube_Simple.h" />
+    <ClInclude Include="CoreHeaders\entity_GridXY.h" />
+    <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
+    <ClInclude Include="CoreHeaders\entity_VAO.h" />
+    <ClInclude Include="CoreHeaders\fbo.h" />
+    <ClInclude Include="CoreHeaders\font.h" />
+    <ClInclude Include="CoreHeaders\generalLoader.h" />
+    <ClInclude Include="CoreHeaders\guiManager.h" />
+    <ClInclude Include="CoreHeaders\helper.h" />
+    <ClInclude Include="CoreHeaders\imageManager.h" />
+    <ClInclude Include="CoreHeaders\light.h" />
+    <ClInclude Include="CoreHeaders\material.h" />
+    <ClInclude Include="CoreHeaders\model.h" />
+    <ClInclude Include="CoreHeaders\modelPart.h" />
+    <ClInclude Include="CoreHeaders\objLoader.h" />
+    <ClInclude Include="CoreHeaders\pbo.h" />
+    <ClInclude Include="CoreHeaders\sceneData.h" />
+    <ClInclude Include="CoreHeaders\sceneGUI.h" />
+    <ClInclude Include="CoreHeaders\sceneInitializer.h" />
+    <ClInclude Include="CoreHeaders\sceneSetting.h" />
+    <ClInclude Include="CoreHeaders\shader.h" />
+    <ClInclude Include="CoreHeaders\shaderProgram.h" />
+    <ClInclude Include="CoreHeaders\ubo.h" />
+    <ClInclude Include="CoreHeaders\vao.h" />
+    <ClInclude Include="CoreHeaders\vao_CubeV3C4.h" />
+    <ClInclude Include="CoreHeaders\vao_GridXY.h" />
+    <ClInclude Include="CoreHeaders\vao_SceneOrigin.h" />
+    <ClInclude Include="CoreHeaders\vcDefs.h" />
+    <ClInclude Include="demos\demo2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="demos.h" />
+    <ClInclude Include="gl_util.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="sceneManager.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shaders\simple_v3_c4.frag" />
+    <None Include="Resources\shaders\simple_v3_c4.vert" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Demos">
+      <UniqueIdentifier>{2d8be352-4ec1-4283-b846-f376276ca597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CoreHeaders">
+      <UniqueIdentifier>{921ba752-3dd7-4c7a-8f1d-d3133fe158ac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="program.cpp" />
+    <ClCompile Include="mouse.cpp" />
+    <ClCompile Include="sceneManager.cpp" />
+    <ClCompile Include="demos\demo2.cpp">
+      <Filter>Demos</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="demos.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="mouse.h" />
+    <ClInclude Include="sceneManager.h" />
+    <ClInclude Include="CoreHeaders\vcDefs.h" />
+    <ClInclude Include="CoreHeaders\boundingBox.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\bufferObject.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\camera.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\eai.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity_Cube_Simple.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity_GridXY.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity_SceneOrigin.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\entity_VAO.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\fbo.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\font.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\generalLoader.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\guiManager.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\helper.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\imageManager.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\light.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\material.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\model.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\modelPart.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\objLoader.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\pbo.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\sceneData.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\sceneGUI.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\sceneInitializer.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\sceneSetting.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\shader.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\shaderProgram.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\ubo.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\vao.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\vao_CubeV3C4.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\vao_GridXY.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreHeaders\vao_SceneOrigin.h">
+      <Filter>CoreHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="gl_util.h" />
+    <ClInclude Include="demos\demo2.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
+    <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shaders\simple_v3_c4.vert" />
+    <None Include="Resources\shaders\simple_v3_c4.frag" />
+  </ItemGroup>
+</Project>
