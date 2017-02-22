@@ -11,6 +11,10 @@
 
 #include <glew.h>
 #include <fstream>
+#include <string>
+#include <regex>
+
+#include "../code/util.h"
 
 using namespace std;
 
@@ -78,25 +82,32 @@ inline void Shader::openFromFile(const char *filename)
 	if (m_shaderObject == 0)
 		create();
 
-	/*  No vertex or fragment program should ever be longer than 512 lines by 255 characters. */
-	char *program = (char*)malloc(SHADER_MAX_LINES*SHADER_MAX_LINE_LENGTH);
+	std::string programStr;
+	std::string line;
+	std::regex includeRegex("#include\\s*\"(.*)\"");
+	std::smatch regexMatch;
+	std::string shaderPath(filename);
+	shaderPath = shaderPath.substr(0, shaderPath.find_last_of('/'));
 
-	const char **programPtr = (const char **)&program;
-	size_t len;
-	char *ptr = program;
-
-	while (!input.eof())
+	while (std::getline(input, line))
 	{
-		input.getline(ptr, SHADER_MAX_LINE_LENGTH);
-		len = strlen(ptr);
-		ptr[len] = '\n';
-		ptr += len + 1;
+		if (std::regex_match(line, regexMatch, includeRegex))
+		{
+			std::string file = regexMatch[1].str();
+			programStr += loadFile(shaderPath + "/" + file);
+		}
+		else
+		{
+			programStr += line;
+		}
+
+		programStr += '\n';
 	}
-	ptr[0] = 0;
 
 	input.close();
 
-	glShaderSource(m_shaderObject, 1, programPtr, NULL);
+	const GLchar* stringData = programStr.c_str();
+	glShaderSource(m_shaderObject, 1, &stringData, NULL);
 	m_shaderState = SS_LOADED;
 
 	glCompileShader(m_shaderObject);
@@ -111,8 +122,6 @@ inline void Shader::openFromFile(const char *filename)
 	}
 
 	m_shaderState = SS_COMPILED;
-
-	free(program);
 }
 
 inline void Shader::openFromArray(const char *data)

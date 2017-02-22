@@ -189,10 +189,10 @@ public:
 	inline const glm::vec3 &getYAxis() const { return m_yAxis; }
 	inline const glm::vec3 &getZAxis() const { return m_zAxis; }
 	inline const glm::quat &getOrientation() const { return m_orientation; }
-	inline const float* getViewMatrix() const { return (float*)&m_vMatrix[0]; }
-	inline const float* getProjectionMatrix() const { return (float*)&m_pMatrix[0]; }
-	inline const float* getViewProjectionMatrix() const { return (float*)&m_vpMatrix[0]; }
-	inline const float* getNormalMatrix() const { return (float*)&m_normalMatrix[0]; }
+	inline const glm::mat4& getViewMatrix() const { return m_vMatrix; }
+	inline const glm::mat4& getProjectionMatrix() const { return m_pMatrix; }
+	inline const glm::mat4& getViewProjectionMatrix() const { return m_vpMatrix; }
+	inline const glm::mat3& getNormalMatrix() const { return m_normalMatrix; }
 	inline const bool preferTargetUpOrbiting() const { return m_preferTargetUpOrbiting; }
 	inline const bool isPerspectiveCamera() const { return m_isPerspectiveCamera; }
     

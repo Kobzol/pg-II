@@ -274,7 +274,10 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\uniform.cpp" />
+    <ClCompile Include="code\util.cpp" />
     <ClCompile Include="demos\demo2.cpp" />
+    <ClCompile Include="demos\demo3.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
@@ -282,12 +285,15 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
+    <ClInclude Include="code\uniform.h" />
+    <ClInclude Include="code\util.h" />
     <ClInclude Include="CoreHeaders\boundingBox.h" />
     <ClInclude Include="CoreHeaders\bufferObject.h" />
     <ClInclude Include="CoreHeaders\camera.h" />
     <ClInclude Include="CoreHeaders\eai.h" />
     <ClInclude Include="CoreHeaders\entity.h" />
     <ClInclude Include="CoreHeaders\entity_Cube_Simple.h" />
+    <ClInclude Include="CoreHeaders\entity_Cube_V3C4N3.h" />
     <ClInclude Include="CoreHeaders\entity_GridXY.h" />
     <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
     <ClInclude Include="CoreHeaders\entity_VAO.h" />
@@ -312,6 +318,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CoreHeaders\ubo.h" />
     <ClInclude Include="CoreHeaders\vao.h" />
     <ClInclude Include="CoreHeaders\vao_CubeV3C4.h" />
+    <ClInclude Include="CoreHeaders\vao_CubeV3C4N3.h" />
     <ClInclude Include="CoreHeaders\vao_GridXY.h" />
     <ClInclude Include="CoreHeaders\vao_SceneOrigin.h" />
     <ClInclude Include="CoreHeaders\vcDefs.h" />
@@ -319,12 +326,16 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="demos.h" />
+    <ClInclude Include="demos\demo3.h" />
     <ClInclude Include="gl_util.h" />
     <ClInclude Include="mouse.h" />
+    <ClInclude Include="Resources\shaders\structures.header" />
     <ClInclude Include="sceneManager.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\shaders\lambert_v3_c4_n3.frag" />
+    <None Include="Resources\shaders\lambert_v3_c4_n3.vert" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
     <None Include="Resources\shaders\simple_v3_c4.vert" />
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "entity_GridXY.h"
 #include "entity_Cube_Simple.h"
 
+#include "../code/uniform.h"
 #include "../code/tetrahedra/TetrahedraVAO.h"
 #include "../code/tetrahedra/TetrahedraEntity.h"
 
@@ -70,8 +71,7 @@ void Demo2::render()
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 
-	int uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "MVPMatrix");
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, ss->m_activeCamera->getViewProjectionMatrix());
+	Uniform<glm::mat4>::bind("MVPMatrix", ss->m_activeShader->m_programObject, ss->m_activeCamera->getViewProjectionMatrix());
 
 	for (unsigned int i = 0; i < m_sceneData->infoEntities.size(); i++)
 		m_sceneData->infoEntities[i]->draw();

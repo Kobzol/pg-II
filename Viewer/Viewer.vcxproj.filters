@@ -15,6 +15,9 @@
     <ClCompile Include="demos\demo2.cpp">
       <Filter>Demos</Filter>
     </ClCompile>
+    <ClCompile Include="demos\demo3.cpp" />
+    <ClCompile Include="code\uniform.cpp" />
+    <ClCompile Include="code\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -126,9 +129,17 @@
     </ClInclude>
     <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
+    <ClInclude Include="demos\demo3.h" />
+    <ClInclude Include="code\uniform.h" />
+    <ClInclude Include="CoreHeaders\vao_CubeV3C4N3.h" />
+    <ClInclude Include="CoreHeaders\entity_Cube_V3C4N3.h" />
+    <ClInclude Include="code\util.h" />
+    <ClInclude Include="Resources\shaders\structures.header" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\simple_v3_c4.vert" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
+    <None Include="Resources\shaders\lambert_v3_c4_n3.frag" />
+    <None Include="Resources\shaders\lambert_v3_c4_n3.vert" />
   </ItemGroup>
 </Project>
