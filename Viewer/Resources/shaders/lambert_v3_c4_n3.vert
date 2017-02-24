@@ -1,4 +1,4 @@
-#version 420 core //compatibility
+#version 400 core //compatibility
 
 #include "structures.header"
 

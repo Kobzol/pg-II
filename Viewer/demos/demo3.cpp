@@ -25,6 +25,11 @@ void Demo3::initVAOs()
 	this->m_sceneData->vaos.push_back(cube);
 }
 
+void Demo3::initUBOs()
+{
+	
+}
+
 void Demo3::initInfoEntities()
 {
 	

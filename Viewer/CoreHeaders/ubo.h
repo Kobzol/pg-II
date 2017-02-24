@@ -15,7 +15,7 @@
 
 /// <summary>	An UBO. 
 /// 			In case of UBO class, the whole GL buffer objects is accessed via m_object variable of the BufferObject class. UBO does not contain any other sub-buffers, compared to e.g. FBO or VAO.</summary>
-/// <remarks>	Gajdi, 7. 4. 2015. </remarks>
+/// <remarks>	Gajdi, 7. 4. 2015. </remarks
 class UBO : public BufferObject
 {
 public:
@@ -28,18 +28,36 @@ public:
 	virtual void bind();
 	virtual void unbind();
 	virtual void clear();
-	virtual void init();
+	
+	template <typename T>
+	void init(GLuint program, const std::string& uboName);
+
+	template <typename T>
+	void copy(const T* uboObject);
 
 	virtual void getUniformInfo(){}
 };
 
-inline void UBO::init()
+template <typename T>
+inline void UBO::init(GLuint program, const std::string& uboName)
 {
 	if (m_isInitialized)
 	{
 		clear();
 	}
-	m_isInitialized = false;
+
+	glGenBuffers(1, &m_object);
+	m_isInitialized = true;
+
+	this->bind();
+
+	unsigned int block_index = glGetUniformBlockIndex(program, uboName.c_str());
+
+	glBindBufferBase(GL_UNIFORM_BUFFER, this->m_bindingPoint, m_object);	// bind buffer to binding point
+	glUniformBlockBinding(program, block_index, this->m_bindingPoint);	// connect buffer with uniform
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(T), NULL, GL_DYNAMIC_DRAW);
+
+	this->unbind();
 }
 
 inline void UBO::clear()
@@ -60,6 +78,18 @@ inline void UBO::bind()
 inline void UBO::unbind()
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+template <typename T>
+void UBO::copy(const T* uboObject)
+{
+	this->bind();
+
+	GLvoid* mem = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+	memcpy(mem, uboObject, sizeof(T));
+	glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+	this->unbind();
 }
 
 #endif

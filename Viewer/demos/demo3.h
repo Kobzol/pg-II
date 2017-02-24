@@ -8,6 +8,7 @@ class Demo3 : public SceneInitializer
 private:
 	void initShaders();
 	void initVAOs();
+	void initUBOs() override;
 	void initInfoEntities();
 	void initSceneEntities();
 
