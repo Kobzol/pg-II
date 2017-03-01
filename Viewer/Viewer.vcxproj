@@ -278,6 +278,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="code\util.cpp" />
     <ClCompile Include="demos\demo2.cpp" />
     <ClCompile Include="demos\demo3.cpp" />
+    <ClCompile Include="demos\demo4.cpp" />
+    <ClCompile Include="demos\demo5.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
@@ -295,6 +297,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CoreHeaders\entity_Cube_Simple.h" />
     <ClInclude Include="CoreHeaders\entity_Cube_V3C4N3.h" />
     <ClInclude Include="CoreHeaders\entity_GridXY.h" />
+    <ClInclude Include="CoreHeaders\entity_OBJ.h" />
     <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
     <ClInclude Include="CoreHeaders\entity_VAO.h" />
     <ClInclude Include="CoreHeaders\fbo.h" />
@@ -327,6 +330,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     </ClInclude>
     <ClInclude Include="demos.h" />
     <ClInclude Include="demos\demo3.h" />
+    <ClInclude Include="demos\demo4.h" />
+    <ClInclude Include="demos\demo5.h" />
     <ClInclude Include="gl_util.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="Resources\shaders\structures.header" />
@@ -334,6 +339,9 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\shaders\ads_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\ads_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\gooch_v3_n3_t3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.vert" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />

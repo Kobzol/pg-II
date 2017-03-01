@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <sceneInitializer.h>
 
 class Demo3 : public SceneInitializer
