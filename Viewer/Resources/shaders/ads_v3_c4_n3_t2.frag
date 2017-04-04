@@ -13,7 +13,7 @@ in vec4 ecPosition;
 in vec3 ecLightDir;
 in vec3 ecNormal;
 in vec3 ecViewDir;
-in vec3 texCoords;
+in vec2 texCoord;
 
 void main()
 {
@@ -21,10 +21,10 @@ void main()
 	vec3 ecNormalNormalized = normalize(ecNormal);
 	vec3 ecViewDirNormalized = normalize(ecViewDir);
 
-	vec4 textureColor = texture(diffuseTexture, texCoords.xy);
+	vec4 texColor = texture(diffuseTexture, texCoord);
 
 	vec4 ambient = material.ambient * light.ambient;
-	vec4 diffuse = (textureColor * material.diffuse) * light.diffuse;
+	vec4 diffuse = (material.diffuse * texColor) * light.diffuse;
 	vec4 specular = vec4(0.0f);
 
 	float lightAngle = dot(ecLightDirNormalized, ecNormalNormalized);

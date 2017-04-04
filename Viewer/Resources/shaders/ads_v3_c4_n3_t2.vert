@@ -3,8 +3,9 @@
 #include "structures.header"
 
 layout(location = 0) in vec3 VertexPosition;
-layout(location = 1) in vec3 VertexNormal;
-layout(location = 2) in vec3 VertexTex;
+layout(location = 1) in vec4 VertexColor;
+layout(location = 2) in vec3 VertexNormal;
+layout(location = 3) in vec2 VertexTex;
 
 uniform mat4 PMatrix;		//Camera projection matrix
 uniform mat4 VMatrix;		//Camera view matrix
@@ -18,7 +19,7 @@ out vec4 ecPosition;
 out vec3 ecLightDir;
 out vec3 ecNormal;
 out vec3 ecViewDir;
-out vec3 texCoords;
+out vec2 texCoord;
 
 void main()
 {
@@ -26,7 +27,7 @@ void main()
 	ecLightDir = vec3((VMatrix * light.position) - ecPosition);
 	ecNormal = NormalMatrix * VertexNormal;
 	ecViewDir = -vec3(ecPosition);	// kamera je v (0, 0, 0)
-	texCoords = VertexTex;
+	texCoord = VertexTex;
 
 	gl_Position = PMatrix * ecPosition;
 }

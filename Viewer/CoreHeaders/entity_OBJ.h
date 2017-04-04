@@ -53,6 +53,9 @@ inline void Entity_OBJ::draw(const unsigned int eid)
 	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "NormalMatrix");
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, (float*)&(glm::inverseTranspose(glm::mat3(tmp)))[0]);
 
+	uniform = glGetUniformLocation(ss->m_activeShader->m_programObject, "NormalMatrixObj");
+	glUniformMatrix3fv(uniform, 1, GL_FALSE, (float*)&(glm::inverseTranspose(glm::mat3(m_modelMatrix)))[0]);
+
 	glBindVertexArray(m_vao->m_object);
 
 	for (unsigned int i = 0; i<m_vao->m_eai->size(); i++)

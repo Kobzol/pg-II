@@ -14,8 +14,13 @@ private:
 	void initSceneEntities() override;
 	void initLights() override;
 
+	char* data = nullptr;
+
 public:
-	Demo5(SceneData *sdPtr) : SceneInitializer(sdPtr) {}
+	Demo5(SceneData *sdPtr) : SceneInitializer(sdPtr)
+	{
+		this->data = new char[100 * 100 * 4];
+	}
 
 	void render();
 };

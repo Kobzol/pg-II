@@ -105,9 +105,9 @@ struct Material
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, tmp))>=0)
 			glUniform1i(uniform, (material->m_diffuseTextureGL > 0) ? 1 : 0);
 
-		//memcpy_s(&tmp[length], 128, "diffuseTexture\0", 15);
-		//if ((uniform = glGetUniformLocation(spPtr->programObject, tmp))>=0)
-		//	glUniform1ui(uniform, diffuseTextureGL);
+		/*memcpy_s(&tmp[length], 128, "diffuseTexture\0", 15);
+		if ((uniform = glGetUniformLocation(spPtr->m_programObject, tmp))>=0)
+			glUniform1ui(uniform, diffuseTextureGL);*/
 		
 		if ((uniform = glGetUniformLocation(spPtr->m_programObject, "diffuseTexture"))>=0)
 			glUniform1i(uniform, 0);			//Texture unit is set = sampler will access GL_TEXTURE0 = texture unit 0. DO NOT SET the diffuse texture diffuseTextureGL!!! 

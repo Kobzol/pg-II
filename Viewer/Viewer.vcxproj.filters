@@ -20,6 +20,8 @@
     <ClCompile Include="code\util.cpp" />
     <ClCompile Include="demos\demo4.cpp" />
     <ClCompile Include="demos\demo5.cpp" />
+    <ClCompile Include="demos\demo6.cpp" />
+    <ClCompile Include="demos\demo7.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -140,6 +142,10 @@
     <ClInclude Include="demos\demo4.h" />
     <ClInclude Include="CoreHeaders\entity_OBJ.h" />
     <ClInclude Include="demos\demo5.h" />
+    <ClInclude Include="demos\demo6.h" />
+    <ClInclude Include="CoreHeaders\entity_Cube.h" />
+    <ClInclude Include="CoreHeaders\vao_CubeV3C4N3T2.h" />
+    <ClInclude Include="demos\demo7.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\simple_v3_c4.vert" />
@@ -149,5 +155,10 @@
     <None Include="Resources\shaders\ads_v3_n3_t3.vert" />
     <None Include="Resources\shaders\ads_v3_n3_t3.frag" />
     <None Include="Resources\shaders\gooch_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\blend_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\ads_v3_c4_n3_t2.frag" />
+    <None Include="Resources\shaders\ads_v3_c4_n3_t2.vert" />
+    <None Include="Resources\shaders\texproj_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\texproj_v3_n3_t3.frag" />
   </ItemGroup>
 </Project>
