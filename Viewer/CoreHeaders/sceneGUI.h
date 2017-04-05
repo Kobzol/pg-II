@@ -10,6 +10,9 @@
 #define __SCENEGUI_H_
 
 #include <AntTweakBar.h>
+#include <iostream>
+
+extern int renderShader;
 
 static class SceneGUI
 {
@@ -23,6 +26,12 @@ private:
 inline void TW_CALL SceneGUI::toggleFullscreen(void* tw_satisfy)
 { 
 	glutFullScreenToggle();
+}
+
+void TW_CALL toggleShader(void* tw_satisfy)
+{
+	if (renderShader == 1) renderShader = 2;
+	else renderShader = 1;
 }
 
 inline TwBar* SceneGUI::createBar()
@@ -42,9 +51,12 @@ inline TwBar* SceneGUI::createBar()
 		"group = 'Screen' "
 		"label = 'Toggle Fullscreen' "
 		"help  = 'Toggle Fullscreen' ");
+
+	TwAddButton(bar, "Toggle", toggleShader, NULL,
+		"group = 'Screen' "
+		"label = 'Toggle shader' "
+		"help  = 'Toggle shader' ");
 	return bar;
 }
-
-
 
 #endif
