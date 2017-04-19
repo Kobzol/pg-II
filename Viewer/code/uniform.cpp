@@ -13,19 +13,23 @@ void Uniform<int>::bindValue(GLuint uniform, const int& value)
 }
 
 template<>
+void Uniform<glm::vec3>::bindValue(GLuint uniform, const glm::vec3& value)
+{
+	glUniform3fv(uniform, 1, glm::value_ptr(value));
+}
+template<>
 void Uniform<glm::vec4>::bindValue(GLuint uniform, const glm::vec4& value)
 {
 	glUniform4fv(uniform, 1, glm::value_ptr(value));
 }
 
 template<>
-void Uniform<glm::mat4>::bindValue(GLuint uniform, const glm::mat4& value)
-{
-	glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
-}
-
-template<>
 void Uniform<glm::mat3>::bindValue(GLuint uniform, const glm::mat3& value)
 {
 	glUniformMatrix3fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
+}
+template<>
+void Uniform<glm::mat4>::bindValue(GLuint uniform, const glm::mat4& value)
+{
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, glm::value_ptr(value));
 }

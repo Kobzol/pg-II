@@ -13,6 +13,11 @@
 #include <iostream>
 
 extern int renderShader;
+extern float parallaxScale;
+extern float parallaxBias;
+extern float parallaxInvertDepth;
+extern float parallaxEffectHeight;
+extern float displacementFactor;
 
 static class SceneGUI
 {
@@ -32,6 +37,12 @@ void TW_CALL toggleShader(void* tw_satisfy)
 {
 	if (renderShader == 1) renderShader = 2;
 	else renderShader = 1;
+}
+
+void TW_CALL toggleParallaxInvertDepth(void* tw_satisfy)
+{
+	parallaxInvertDepth = 1.0f - parallaxInvertDepth;
+	std::cerr << parallaxInvertDepth << std::endl;
 }
 
 inline TwBar* SceneGUI::createBar()
@@ -56,6 +67,15 @@ inline TwBar* SceneGUI::createBar()
 		"group = 'Screen' "
 		"label = 'Toggle shader' "
 		"help  = 'Toggle shader' ");
+	TwAddVarRW(bar, "ParallaxScale", TW_TYPE_FLOAT, &parallaxScale, " min=0 max=1.0 step=0.01 label='Parallax scale' ");
+	TwAddVarRW(bar, "ParallaxBias", TW_TYPE_FLOAT, &parallaxBias, " min=0 max=1.0 step=0.01 label='Parallax bias' ");
+	TwAddVarRW(bar, "ParallaxEffectHeight", TW_TYPE_FLOAT, &parallaxEffectHeight, " min=0 max=100.0 step=1.0 label='Parallax effect height' ");
+	TwAddButton(bar, "ParallaxInvertDepth", toggleParallaxInvertDepth, NULL,
+		"label = 'Parallax invert depth' "
+		"help  = 'Parallax invert depth' ");
+
+	TwAddVarRW(bar, "DisplacementFactor", TW_TYPE_FLOAT, &displacementFactor, " min=0 max=2.0 step=0.1 label='Tessellation displacement factor' ");
+
 	return bar;
 }
 

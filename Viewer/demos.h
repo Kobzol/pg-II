@@ -8,7 +8,9 @@
 #include "demos/demo6.h"
 #include "demos/demo7.h"
 #include "demos/demo8.h"
+#include "demos/demo9.h"
+#include "demos/demo10.h"
 
-#define LOAD_DEMO Demo8(m_sceneData)
+#define LOAD_DEMO Demo10(m_sceneData)
 
 #endif

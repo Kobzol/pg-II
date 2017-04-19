@@ -1,4 +1,4 @@
-#include "demo8.h"
+#include "demo9.h"
 
 #include "vao_SceneOrigin.h"
 #include "vao_GridXY.h"
@@ -11,18 +11,22 @@
 
 #include "../code/uniform.h"
 
-static int renderShader = 1;
+int renderShader = 1;
+float parallaxScale = 0.01f;
+float parallaxBias = 0.01f;
+float parallaxInvertDepth = 0.0f;
+float parallaxEffectHeight = 1.0f;
 
-void Demo8::initShaders()
+void Demo9::initShaders()
 {
 	addResPath("shaders/");
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
-	initShaderProgram("normal_mapping.vert", "normal_mapping.frag");
+	initShaderProgram("parallax_mapping.vert", "parallax_mapping.frag");
 	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
 	resetResPath();
 }
 
-void Demo8::initModels()
+void Demo9::initModels()
 {
 	ObjLoader objL;
 	Model* m;
@@ -35,7 +39,7 @@ void Demo8::initModels()
 	resetResPath();
 }
 
-void Demo8::initVAOs()
+void Demo9::initVAOs()
 {
 	VAO_SceneOrigin* vao0 = new VAO_SceneOrigin();
 	vao0->init();
@@ -50,12 +54,12 @@ void Demo8::initVAOs()
 	m_sceneData->vaos.push_back(vao);
 }
 
-void Demo8::initTextures()
+void Demo9::initTextures()
 {
 	addResPath("textures/");
 	//Load sprite textures
 	GLuint texID;
-	FIBITMAP *image = ImageManager::GenericLoader(getResFile("cobblestonesDiffuse.bmp"), 0);
+	FIBITMAP *image = ImageManager::GenericLoader(getResFile("stonewallDiffuse.bmp"), 0);
 
 	//TODO Create Texture:
 	glGenTextures(1, &texID);
@@ -75,13 +79,33 @@ void Demo8::initTextures()
 	FreeImage_Unload(image);
 	m_sceneData->textures.push_back(texID);
 
-	image = ImageManager::GenericLoader(getResFile("cobblestonesNormal.bmp"), 0);
+	image = ImageManager::GenericLoader(getResFile("stonewallNormal.bmp"), 0);
 
 	//TODO Create Texture:
 	glGenTextures(1, &texID);
 
 	glBindTexture(GL_TEXTURE_2D, texID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, 1.5f);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	FreeImage_Unload(image);
+	m_sceneData->textures.push_back(texID);
+
+	image = ImageManager::GenericLoader(getResFile("stonewallDepth.bmp"), 0);
+
+	//TODO Create Texture:
+	glGenTextures(1, &texID);
+
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0, GL_RED, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
@@ -98,7 +122,7 @@ void Demo8::initTextures()
 	resetResPath();
 }
 
-void Demo8::initMaterials()
+void Demo9::initMaterials()
 {
 	Material *m = new Material();
 
@@ -113,7 +137,7 @@ void Demo8::initMaterials()
 	m_sceneData->materials.push_back(m);
 }
 
-void Demo8::initInfoEntities()
+void Demo9::initInfoEntities()
 {
 	Entity_SceneOrigin *e0 = new Entity_SceneOrigin(m_sceneData->vaos[0]);
 	e0->init();
@@ -124,7 +148,7 @@ void Demo8::initInfoEntities()
 	m_sceneData->infoEntities.push_back(e1);
 }
 
-void Demo8::initSceneEntities()
+void Demo9::initSceneEntities()
 {
 	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[0], m_sceneData->vaos[2]);
 	obj->setPosition(0.0f, 0.0, 0.0f);
@@ -134,7 +158,7 @@ void Demo8::initSceneEntities()
 	m_sceneData->sceneEntities.push_back(obj);
 }
 
-void Demo8::render()
+void Demo9::render()
 {
 	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
@@ -165,6 +189,12 @@ void Demo8::render()
 
 	Uniform<int>::bind("texDiffuse", ss->m_activeShader->m_programObject, 0);
 	Uniform<int>::bind("texNormal", ss->m_activeShader->m_programObject, 1);
+	Uniform<int>::bind("texDepth", ss->m_activeShader->m_programObject, 2);
+
+	Uniform<float>::bind("parallaxScale", ss->m_activeShader->m_programObject, parallaxScale);
+	Uniform<float>::bind("parallaxBias", ss->m_activeShader->m_programObject, parallaxBias);
+	Uniform<float>::bind("parallaxInvertDepth", ss->m_activeShader->m_programObject, parallaxInvertDepth);
+	Uniform<float>::bind("parallaxEffectHeight", ss->m_activeShader->m_programObject, parallaxEffectHeight);
 
 	e = m_sceneData->sceneEntities[0];
 	Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
@@ -174,6 +204,9 @@ void Demo8::render()
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[1]);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[2]);
 
 	e->draw();
 	glBindTexture(GL_TEXTURE_2D, 0);

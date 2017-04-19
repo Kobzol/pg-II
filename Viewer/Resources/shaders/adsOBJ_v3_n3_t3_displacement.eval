@@ -1,0 +1,59 @@
+#version 400 core //compatibility
+
+struct LightInfo {
+	vec4 position;			//Light position   X,Y,Z, directional=0 OR positional=1
+	vec4 ambient;			//Light ambient color
+	vec4 diffuse;			//Light diffuse color
+	vec4 specular;			//Light specular color
+	vec4 spotDirection;		//Specifies light direction
+	int spotExponent;		//Specifies intensity distribution of spotlight
+	float spotCutoff;			//Specifies maximum spread angle of spotlight (180 = off).
+};
+
+layout(triangles, equal_spacing, ccw) in;		// trinagles | quads | isolines),  equal_spacing | fractional_even_spacing | fractional_odd_spacing, ccw | cw
+
+uniform mat4 PMatrix;		//Camera projection matrix
+uniform mat4 VMatrix;		//Camera view matrix
+
+uniform sampler2D texDepth;		
+uniform LightInfo light;
+uniform float DisplacementFactor;
+
+in vec3 wcPosition2[];
+in vec3 wcNormal2[];
+in vec2 wcTexCoords2[];
+
+out vec4 ecPosition;
+out vec3 ecLightDir;
+out vec3 ecNormal;
+out vec3 ecViewDir;
+out vec2 texCoords;
+
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
+{
+    return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+}
+
+vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
+{
+    return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+} 
+
+void main()
+{
+	//1. Interpolate the attributes of the output vertex using the barycentric coordinates
+	vec2 wcTexCoords3 = interpolate2D(wcTexCoords2[0], wcTexCoords2[1], wcTexCoords2[2]);
+	vec3 wcNormal3 = interpolate3D(wcNormal2[0], wcNormal2[1], wcNormal2[2]);
+	vec3 wcPosition3 = interpolate3D(wcPosition2[0], wcPosition2[1], wcPosition2[2]);
+
+	//2. Displace the vertex along the normal
+    float displacement = (texture(texDepth, wcTexCoords3).x) * DisplacementFactor;
+	wcPosition3 += normalize(wcNormal3) * displacement;
+	
+	texCoords = wcTexCoords3.xy;
+    ecPosition = VMatrix * vec4(wcPosition3, 1.0);
+    ecLightDir   = vec3(VMatrix * light.position - ecPosition);
+    ecNormal =  vec3(VMatrix * vec4(wcNormal3, 0.0));
+    ecViewDir = -vec3(ecPosition);
+    gl_Position  = PMatrix * ecPosition;
+}
