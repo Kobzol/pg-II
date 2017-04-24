@@ -25,6 +25,7 @@
     <ClCompile Include="demos\demo8.cpp" />
     <ClCompile Include="demos\demo9.cpp" />
     <ClCompile Include="demos\demo10.cpp" />
+    <ClCompile Include="demos\demoSelect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -152,6 +153,10 @@
     <ClInclude Include="demos\demo8.h" />
     <ClInclude Include="demos\demo9.h" />
     <ClInclude Include="demos\demo10.h" />
+    <ClInclude Include="demos\demoSelect.h" />
+    <ClInclude Include="CoreHeaders\entity_Selectable.h" />
+    <ClInclude Include="CoreHeaders\vao_quad.h" />
+    <ClInclude Include="CoreHeaders\entity_ViewAngle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\simple_v3_c4.vert" />
@@ -174,5 +179,9 @@
     <None Include="Resources\shaders\adsOBJ_v3_n3_t3_displacement.eval" />
     <None Include="Resources\shaders\adsOBJ_v3_n3_t3_displacement.vert" />
     <None Include="Resources\shaders\adsOBJ_v3_n3_t3_displacement.frag" />
+    <None Include="Resources\shaders\const_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\const_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\quad.vert" />
+    <None Include="Resources\shaders\quad_select.frag" />
   </ItemGroup>
 </Project>

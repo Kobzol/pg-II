@@ -11,6 +11,8 @@
 #include "demos/demo9.h"
 #include "demos/demo10.h"
 
-#define LOAD_DEMO Demo10(m_sceneData)
+#include "demos/demoSelect.h"
+
+#define LOAD_DEMO DemoSelect(m_sceneData)
 
 #endif

@@ -28,6 +28,7 @@ public:
 	float m_startDrag[2];
 	float m_lastPosition[2];
 	float m_delta[2];
+	float m_passivePosition[2];
 
 	Camera*		m_camera;
 	int			m_state;

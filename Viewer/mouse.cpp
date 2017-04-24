@@ -47,6 +47,8 @@ void Mouse::activeMove(int x, int y)
 
 void Mouse::passiveMove(int x, int y) 
 {
+	m_passivePosition[0] = x;
+	m_passivePosition[1] = y;
 	//SceneManager::GetInstance()->Pick(x,y);
 	//SceneManager::GetInstance()->Redisplay();
 }

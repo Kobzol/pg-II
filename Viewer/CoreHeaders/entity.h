@@ -57,6 +57,11 @@ public:
 	virtual void print(){}
 	virtual void idle(){}
 
+	glm::vec3 getScale()
+	{
+		return glm::vec3(m_modelMatrix[0][0], m_modelMatrix[1][1], m_modelMatrix[2][2]);
+	}
+
 	virtual void setPosition(const float x, const float y, const float z);
 	virtual void setScale(const float sx, const float sy, const float sz);
 	virtual void setOrientation(const float pitchDegrees, const float headingDegrees, const float rollDegrees);
