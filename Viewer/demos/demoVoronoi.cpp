@@ -207,13 +207,13 @@ void DemoVoronoi::drawVoronoi()
 	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_VORONOI];
 	ss->m_activeShader->enable();
 
-	for (auto& p : points)
+	/*for (auto& p : points)
 	{
 		p.x = 0.5f * std::sin(time * 0.02f + p.x);
 		p.y = 0.5f * std::sin(time * 0.02f + p.y);
 	}
 
-	Uniform<std::vector<glm::vec2>>::bind("Points", ss, points);
+	Uniform<std::vector<glm::vec2>>::bind("Points", ss, points);*/
 	Uniform<float>::bind("Time", ss, time);
 	Uniform<float>::bind("VoronoiScale", ss, voronoiScale);
 

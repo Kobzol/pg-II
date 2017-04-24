@@ -17,12 +17,14 @@ vec2 random2(vec2 p)
 	return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
 }
 
-float getDist()
+vec4 getDistColor()
 {
 	vec2 pos = centerVector * VoronoiScale;
 	vec2 i_st = floor(pos);
     vec2 f_st = fract(pos);
 	float dist = 1.0f;
+
+	vec2 minPoint = vec2(0.0f, 0.0f);
 
 	for (int y = -1; y <= 1; y++)
 	{
@@ -33,12 +35,21 @@ float getDist()
 			point = 0.5 + 0.5 * sin(Time + 6.2831 * point);
 
 			vec2 diff = neighbor + point - f_st;
+			float currDist = length(diff);
 
-			dist = min(dist, length(diff));
+			if (currDist < dist)
+			{
+				dist = currDist;
+				minPoint = neighbor + point;
+			}
 		}
 	}
 
-    return dist;
+    if (dist < 0.02f)
+	{
+		return vec4(1.0f);
+	}
+	else return vec4(minPoint.x, minPoint.y, 0.0f, 1.0f) - abs(sin(80.0f * dist)) * 0.07;
 }
 float getDistPoints()
 {
@@ -55,14 +66,7 @@ float getDistPoints()
 
 void main()
 {
-	vec4 color;
-
-	float dist = getDist();
-	if (dist < 0.02f)
-	{
-		color = vec4(1.0f);
-	}
-	else color = vec4(vec3(dist), 1.0f);
+	vec4 color = getDistColor();
 
 	FragColor = color;
 }

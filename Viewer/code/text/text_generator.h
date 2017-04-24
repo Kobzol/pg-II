@@ -3,10 +3,13 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <ctime>
 
 static std::default_random_engine generator;
 static std::uniform_int_distribution<int> charDistribution(32, 126);
 static std::uniform_int_distribution<int> spaceDistribution(0, 100);
+static std::normal_distribution<float> sentenceLength(4.0f, 6.0f);
+static std::normal_distribution<float> spaceLength(3.0f, 1.0f);
 static float spaceChance = 0.4f;
 
 class TextGenerator
@@ -24,13 +27,26 @@ public:
 
 	void permute()
 	{
+		generator.seed((unsigned int) time(nullptr));
+
 		for (auto& col : this->matrix)
 		{
-			for (size_t i = 0; i < col.size(); i++)
+			size_t i = 0;
+			while (i < col.size())
 			{
-				bool space = spaceDistribution(generator) < (spaceChance * 100.0f);
+				/*bool space = spaceDistribution(generator) < (spaceChance * 100.0f);
 				char c = space ? ' ' : (charDistribution(generator));
-				col[i] = c;
+				col[i] = c;*/
+				int sentence = std::max(1.0f, sentenceLength(generator));
+				while (i < col.size() && sentence--)
+				{
+					col[i++] = charDistribution(generator);
+				}
+				int space = std::max(1.0f, spaceLength(generator));
+				while (i < col.size() && space--)
+				{
+					col[i++] = ' ';
+				}
 			}
 		}
 	}

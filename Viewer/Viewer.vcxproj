@@ -387,7 +387,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\normal_mapping.vert" />
     <None Include="Resources\shaders\parallax_mapping.frag" />
     <None Include="Resources\shaders\parallax_mapping.vert" />
-    <None Include="Resources\shaders\parallax_text_mapping.frag" />
+    <None Include="Resources\shaders\parallax_diff_mapping.frag" />
     <None Include="Resources\shaders\quad.vert" />
     <None Include="Resources\shaders\quad_screen.vert" />
     <None Include="Resources\shaders\quad_select.frag" />

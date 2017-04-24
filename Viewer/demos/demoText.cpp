@@ -208,7 +208,7 @@ void DemoText::initCameras()
 
 void DemoText::initFonts()
 {
-	font = new Text("Resources/fonts/arial.ttf");
+	font = new Text("Resources/fonts/matrix.ttf");
 }
 
 void DemoText::initFBOs()
@@ -283,7 +283,7 @@ void DemoText::renderText(const std::string& text, float x, float y, float scale
 
 void DemoText::render()
 {
-	float delta = SceneManager::GetInstance()->delta;
+	float delta = SceneManager::GetInstance()->delta * 0.5f;
 	matrixTextTimer.update(delta);
 
 	Entity *e = nullptr;

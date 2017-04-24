@@ -79,9 +79,9 @@ inline TwBar* SceneGUI::createBar()
 
 	TwAddVarRW(bar, "DisplacementFactor", TW_TYPE_FLOAT, &displacementFactor, " min=0 max=2.0 step=0.1 label='Tessellation displacement factor' ");
 
-	TwAddVarRW(bar, "ActiveDemo", TW_TYPE_UINT32, &activeDemo, " min=0 max=2 step=1 label='Active demo'");
-
 	TwAddVarRW(bar, "VoronoiScale", TW_TYPE_FLOAT, &voronoiScale, " min=1.0 max=100.0 step=1.0 label='Voronoi scale' ");
+
+	TwAddVarRW(bar, "ActiveDemo", TW_TYPE_UINT32, &activeDemo, " min=0 max=4 step=1 label='Active demo'");
 
 	return bar;
 }

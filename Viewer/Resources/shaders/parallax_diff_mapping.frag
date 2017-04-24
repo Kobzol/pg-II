@@ -27,15 +27,20 @@ vec3 remapNormal(vec3 texColor)
 {
 	return vec3(texColor.x * 2.0f - 1.0f, texColor.y * 2.0f - 1.0f, texColor.z);
 }
+float getHeight(vec2 texCoords)
+{
+	vec3 value = texture(diffuseTexture, texCoords).xyz;
+	return (value.x + value.y + value.z) / 3.0f;
+}
 vec2 parallaxMapping(vec2 texCoords, vec3 viewDir)
 { 
-    float height = texture(diffuseTexture, texCoords).r;
+    float height = getHeight(texCoords);
     vec2 p = (viewDir.xy / viewDir.z) * (height * parallaxScale + parallaxBias);
     return texCoords + p;
 }
 vec2 steepParallax(vec2 texCoords, vec3 viewDir)
 {
-	float height = texture(diffuseTexture, texCoords).r;
+	float height = getHeight(texCoords);
 	vec2 p = (-viewDir.xy / viewDir.z) * (parallaxScale + parallaxBias);
 
 	vec2 texDelta = p / parallaxStepCount;
@@ -45,7 +50,7 @@ vec2 steepParallax(vec2 texCoords, vec3 viewDir)
 	{
 		effectHeight -= stepValue;
 		texCoords += texDelta;
-		height = texture(diffuseTexture, texCoords).r;
+		height = getHeight(texCoords);
 	}
 
 	vec2 delta = 0.5f * texDelta;
@@ -55,7 +60,7 @@ vec2 steepParallax(vec2 texCoords, vec3 viewDir)
 	{
 		delta *= 0.5f;
 
-		if (texture(diffuseTexture, mid).r < effectHeight)
+		if (getHeight(mid) < effectHeight)
 		{
 			mid += delta;
 		}

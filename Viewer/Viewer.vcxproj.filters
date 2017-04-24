@@ -200,10 +200,10 @@
     <None Include="Resources\shaders\text.vert" />
     <None Include="Resources\shaders\text.frag" />
     <None Include="Resources\shaders\quad_texture.frag" />
-    <None Include="Resources\shaders\parallax_text_mapping.frag" />
     <None Include="Resources\shaders\explode_v3.geom" />
     <None Include="Resources\shaders\explode_v3.frag" />
     <None Include="Resources\shaders\quad_voronoi.frag" />
     <None Include="Resources\shaders\quad_screen.vert" />
+    <None Include="Resources\shaders\parallax_diff_mapping.frag" />
   </ItemGroup>
 </Project>
