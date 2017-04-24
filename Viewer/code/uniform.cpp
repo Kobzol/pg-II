@@ -1,5 +1,7 @@
 #include "uniform.h"
 
+#include <vector>
+
 template<>
 void Uniform<float>::bindValue(GLuint uniform, const float& value)
 {
@@ -12,6 +14,11 @@ void Uniform<int>::bindValue(GLuint uniform, const int& value)
 	glUniform1i(uniform, value);
 }
 
+template<>
+void Uniform<glm::vec2>::bindValue(GLuint uniform, const glm::vec2& value)
+{
+	glUniform2fv(uniform, 1, glm::value_ptr(value));
+}
 template<>
 void Uniform<glm::vec3>::bindValue(GLuint uniform, const glm::vec3& value)
 {

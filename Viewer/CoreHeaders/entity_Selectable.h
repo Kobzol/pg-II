@@ -1,13 +1,13 @@
 #pragma once
 
 #include "entity.h"
-#include "entity_ViewAngle.h"
+#include "entity_Quad.h"
 #include "../code/uniform.h"
 
 class EntitySelectable : public Entity
 {
 public:
-	EntitySelectable(Entity* entity, ShaderProgram* constShader, ViewAngleEntity* quadEntity, ShaderProgram* quadShader)
+	EntitySelectable(Entity* entity, ShaderProgram* constShader, QuadEntity* quadEntity, ShaderProgram* quadShader)
 		: entity(entity), constShader(constShader), quadEntity(quadEntity), quadShader(quadShader)
 	{
 
@@ -71,7 +71,7 @@ public:
 	Entity* entity;
 	ShaderProgram* constShader;
 
-	ViewAngleEntity* quadEntity;
+	QuadEntity* quadEntity;
 	ShaderProgram* quadShader;
 
 	glm::vec3 scale{ 1.05f, 1.05f, 1.05f };

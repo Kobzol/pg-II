@@ -1,4 +1,4 @@
-#include "demoSelect.h"
+#include "demoVoronoi.h"
 
 #include "vao_SceneOrigin.h"
 #include "vao_GridXY.h"
@@ -13,26 +13,34 @@
 #include "entity_Quad.h"
 
 #include "../code/uniform.h"
+#include "../code/framebuffer/framebuffer.h"
+#include <sceneManager.h>
+#include <random>
 
 static int MODEL_SPHERE;
 static int SHADER_SIMPLE;
 static int SHADER_PHONG;
-static int SHADER_CONST;
-static int SHADER_QUAD;
 
 static int VAO_INFO[2];
 static int VAO_SPHERE;
 static int VAO_QUAD;
+static int SHADER_QUAD_VORONOI;
 
 static int TEXTURE_DIFF_SPHERE;
 static int MATERIAL_SPHERE;
 
 static int INFO_ENTITIES[2];
 static std::vector<int> SCENE_ENTITIES;
-static EntitySelectable* ENTITY_SELECTABLE;
-static QuadEntity* ENTITY_VIEW_ANGLE;
+static QuadEntity* QUAD_ENTITY;
 
-void DemoSelect::initShaders()
+static Framebuffer* FBO;
+static std::vector<glm::vec2> points;
+static int POINTS_COUNT = 10;
+
+float voronoiScale = 10.0f;
+
+
+void DemoVoronoi::initShaders()
 {
 	addResPath("shaders/");
 
@@ -42,23 +50,20 @@ void DemoSelect::initShaders()
 	SHADER_PHONG = m_sceneData->shaderPrograms.size();
 	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
 
-	SHADER_CONST = m_sceneData->shaderPrograms.size();
-	initShaderProgram("const_v3_n3_t3.vert", "const_v3_n3_t3.frag");
-
-	SHADER_QUAD = m_sceneData->shaderPrograms.size();
-	initShaderProgram("quad.vert", "quad_select.frag");
+	SHADER_QUAD_VORONOI = m_sceneData->shaderPrograms.size();
+	initShaderProgram("quad_screen.vert", "quad_voronoi.frag");
 
 	resetResPath();
 }
 
-void DemoSelect::initModels()
+void DemoVoronoi::initModels()
 {
 	ObjLoader objL;
 	Model* m;
 
 	addResPath("models/");
 
-	m = objL.loadModel(getResFile("basic/sphereSmooth.obj"));
+	m = objL.loadModel(getResFile("basic/sphereTexture.obj"));
 
 	MODEL_SPHERE = m_sceneData->models.size();
 	m_sceneData->models.push_back(m);
@@ -66,7 +71,7 @@ void DemoSelect::initModels()
 	resetResPath();
 }
 
-void DemoSelect::initVAOs()
+void DemoVoronoi::initVAOs()
 {
 	VAO_SceneOrigin* vao0 = new VAO_SceneOrigin();
 	vao0->init();
@@ -93,7 +98,7 @@ void DemoSelect::initVAOs()
 	m_sceneData->vaos.push_back(quadVAO);
 }
 
-void DemoSelect::initTextures()
+void DemoVoronoi::initTextures()
 {
 	addResPath("textures/");
 	//Load sprite textures
@@ -122,7 +127,7 @@ void DemoSelect::initTextures()
 	resetResPath();
 }
 
-void DemoSelect::initMaterials()
+void DemoVoronoi::initMaterials()
 {
 	Material *m = new Material();
 
@@ -139,7 +144,7 @@ void DemoSelect::initMaterials()
 	m_sceneData->materials.push_back(m);
 }
 
-void DemoSelect::initInfoEntities()
+void DemoVoronoi::initInfoEntities()
 {
 	Entity_SceneOrigin *e0 = new Entity_SceneOrigin(m_sceneData->vaos[VAO_INFO[0]]);
 	e0->init();
@@ -152,7 +157,7 @@ void DemoSelect::initInfoEntities()
 	m_sceneData->infoEntities.push_back(e1);
 }
 
-void DemoSelect::initSceneEntities()
+void DemoVoronoi::initSceneEntities()
 {
 	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[MODEL_SPHERE], m_sceneData->vaos[VAO_SPHERE]);
 	obj->setPosition(0.0f, 0.0, 0.0f);
@@ -160,49 +165,65 @@ void DemoSelect::initSceneEntities()
 	obj->m_material = m_sceneData->materials[MATERIAL_SPHERE];
 	obj->init();
 
+	SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
+	m_sceneData->sceneEntities.push_back(obj);
+
 	QuadEntity* quad = new QuadEntity(m_sceneData->vaos[VAO_QUAD]);
 	quad->setPosition(0.0f, 0.0f, 0.0f);
+	quad->setOrientation(0.0f, 0.0f, 0.0f);
+	quad->m_material = m_sceneData->materials[MATERIAL_SPHERE];
 	quad->init();
-	ENTITY_VIEW_ANGLE = quad;
 
-	EntitySelectable* selectable = new EntitySelectable(obj, m_sceneData->shaderPrograms[SHADER_CONST],
-		quad, m_sceneData->shaderPrograms[SHADER_QUAD]);
-	selectable->m_material = obj->m_material;
-	selectable->init();
-
-	SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
-	m_sceneData->sceneEntities.push_back(selectable);
-
-	ENTITY_SELECTABLE = selectable;
+	QUAD_ENTITY = quad;
+	m_sceneData->sceneEntities.push_back(quad);
 }
 
-static glm::vec3 getMousePos(Camera* camera, unsigned int* screen, Mouse* mouse)
+void DemoVoronoi::initFBOs()
 {
-	float x = mouse->m_passivePosition[0];
-	float y = mouse->m_passivePosition[1];
+	SceneSetting *ss = SceneSetting::GetInstance();
+	FBO = new Framebuffer();
+	FBO->createAttachments(ss->m_screen[0], ss->m_screen[1]);
 
-	float depth = 1.0f;
-	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	std::default_random_engine generator;
+	std::uniform_real_distribution<float> pointsDist(-0.5f, 0.5f);
 
-	glm::vec3 position = glm::vec3(x, y, depth);
-	return glm::unProject(position, camera->getVM(), camera->getProjectionMatrix(), glm::vec4(0, 0, screen[0], screen[1]));
+	for (int i = 0; i < POINTS_COUNT; i++)
+	{
+		points.push_back(glm::vec2(pointsDist(generator), pointsDist(generator)));
+	}
 }
-static unsigned char getStencil(glm::vec2 position)
+
+void DemoVoronoi::drawVoronoi()
 {
-	unsigned char index;
-	glReadPixels(position.x, position.y, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, &index);
-	return index;
+	SceneSetting* ss = SceneSetting::GetInstance();
+
+	FBO->bind();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	static float time = 0.0f;
+	time += 0.01f;
+
+	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_VORONOI];
+	ss->m_activeShader->enable();
+
+	for (auto& p : points)
+	{
+		p.x = 0.5f * std::sin(time * 0.02f + p.x);
+		p.y = 0.5f * std::sin(time * 0.02f + p.y);
+	}
+
+	Uniform<std::vector<glm::vec2>>::bind("Points", ss, points);
+	Uniform<float>::bind("Time", ss, time);
+	Uniform<float>::bind("VoronoiScale", ss, voronoiScale);
+
+	QUAD_ENTITY->draw();
+
+	FBO->unbind();
+	glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
-
-static void updatePick(Mouse* mouse)
-{
-	glm::vec2 mousePos = glm::vec2(mouse->m_passivePosition[0], mouse->m_passivePosition[1]);
-	unsigned char value = getStencil(glm::vec2(mousePos.x, mousePos.y));
-
-	ENTITY_SELECTABLE->selected = value == 1;
-}
-
-void DemoSelect::render()
+void DemoVoronoi::render()
 {
 	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
@@ -236,6 +257,8 @@ void DemoSelect::render()
 		Uniform<glm::mat4>::bind("VMatrix", ss->m_activeShader->m_programObject, ss->m_activeCamera->getViewMatrix());
 	}
 
+	drawVoronoi();
+
 	for (int i = 0; i < SCENE_ENTITIES.size(); i++)
 	{
 		ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_PHONG];
@@ -245,11 +268,9 @@ void DemoSelect::render()
 		Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_sceneData->textures[TEXTURE_DIFF_SPHERE]);
+		glBindTexture(GL_TEXTURE_2D, FBO->texture);//m_sceneData->textures[TEXTURE_DIFF_SPHERE]);
 		e->draw();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
-	updatePick(m_sceneData->mouse);
 #pragma endregion
 }

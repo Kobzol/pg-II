@@ -15,7 +15,7 @@ void main()
 
 	if (len <= radius)
 	{
-		vec4 texColor = vec4(texture(diffuseTexture, texCoords).xyz, len / radius);
+		vec4 texColor = vec4(texture(diffuseTexture, texCoords).xyz, pow(len / radius, 2));
 		FragColor = texColor;//vec4(0.0f, 1.0f, 0.0f, len / radius);
 	}
 	else discard;

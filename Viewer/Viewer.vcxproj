@@ -274,6 +274,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\framebuffer\framebuffer.cpp" />
+    <ClCompile Include="code\timer.cpp" />
     <ClCompile Include="code\uniform.cpp" />
     <ClCompile Include="code\util.cpp" />
     <ClCompile Include="demos\demo10.cpp" />
@@ -285,14 +287,22 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demos\demo7.cpp" />
     <ClCompile Include="demos\demo8.cpp" />
     <ClCompile Include="demos\demo9.cpp" />
+    <ClCompile Include="demos\demoExplode.cpp" />
     <ClCompile Include="demos\demoSelect.cpp" />
+    <ClCompile Include="demos\demoText.cpp" />
+    <ClCompile Include="demos\demoVoronoi.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="sceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\framebuffer\framebuffer.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
+    <ClInclude Include="code\text\text.h" />
+    <ClInclude Include="code\text\text_generator.h" />
+    <ClInclude Include="code\text\vao_text.h" />
+    <ClInclude Include="code\timer.h" />
     <ClInclude Include="code\uniform.h" />
     <ClInclude Include="code\util.h" />
     <ClInclude Include="CoreHeaders\boundingBox.h" />
@@ -305,7 +315,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CoreHeaders\entity_Cube_V3C4N3.h" />
     <ClInclude Include="CoreHeaders\entity_GridXY.h" />
     <ClInclude Include="CoreHeaders\entity_OBJ.h" />
-    <ClInclude Include="CoreHeaders\entity_ViewAngle.h" />
+    <ClInclude Include="CoreHeaders\entity_quad.h" />
     <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
     <ClInclude Include="CoreHeaders\entity_Selectable.h" />
     <ClInclude Include="CoreHeaders\entity_VAO.h" />
@@ -348,7 +358,10 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demos\demo7.h" />
     <ClInclude Include="demos\demo8.h" />
     <ClInclude Include="demos\demo9.h" />
+    <ClInclude Include="demos\demoExplode.h" />
     <ClInclude Include="demos\demoSelect.h" />
+    <ClInclude Include="demos\demoText.h" />
+    <ClInclude Include="demos\demoVoronoi.h" />
     <ClInclude Include="gl_util.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="Resources\shaders\structures.header" />
@@ -365,6 +378,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\blend_v3_n3_t3.frag" />
     <None Include="Resources\shaders\const_v3_n3_t3.frag" />
     <None Include="Resources\shaders\const_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\explode_v3.frag" />
+    <None Include="Resources\shaders\explode_v3.geom" />
     <None Include="Resources\shaders\gooch_v3_n3_t3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.vert" />
@@ -372,14 +387,21 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\normal_mapping.vert" />
     <None Include="Resources\shaders\parallax_mapping.frag" />
     <None Include="Resources\shaders\parallax_mapping.vert" />
+    <None Include="Resources\shaders\parallax_text_mapping.frag" />
     <None Include="Resources\shaders\quad.vert" />
+    <None Include="Resources\shaders\quad_screen.vert" />
     <None Include="Resources\shaders\quad_select.frag" />
+    <None Include="Resources\shaders\quad_texture.frag" />
+    <None Include="Resources\shaders\quad_voronoi.frag" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
     <None Include="Resources\shaders\simple_v3_c4.vert" />
     <None Include="Resources\shaders\ads_v3_c4_n3_t2.frag" />
     <None Include="Resources\shaders\ads_v3_c4_n3_t2.vert" />
     <None Include="Resources\shaders\texproj_v3_n3_t3.frag" />
     <None Include="Resources\shaders\texproj_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\text.frag" />
+    <None Include="Resources\shaders\text.vert" />
+    <None Include="Resources\shaders\text_v3_n3_t3.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -46,7 +46,7 @@ inline FBO::~FBO()
 
 inline void FBO::init()
 {
-	m_isInitialized = false;			//Inherited classes should implement own init() method and set m_isInitialized = true;
+	m_isInitialized = true;			//Inherited classes should implement own init() method and set m_isInitialized = true;
 }
 
 inline void FBO::resize()

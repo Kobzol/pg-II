@@ -4,19 +4,19 @@
 
 #include "../code/uniform.h"
 
-class ViewAngleEntity : public Entity_VAO
+class QuadEntity : public Entity_VAO
 {
 public:
-	ViewAngleEntity(VAO* vao = nullptr) : Entity_VAO(vao)
+	QuadEntity(VAO* vao = nullptr) : Entity_VAO(vao)
 	{
-		
+
 	}
-	~ViewAngleEntity(void) {}
+	~QuadEntity(void) {}
 
 	void draw(const unsigned int eid = 0);
 };
 
-inline void ViewAngleEntity::draw(const unsigned int eid)
+inline void QuadEntity::draw(const unsigned int eid)
 {
 	if (!m_isInitialized) return;
 

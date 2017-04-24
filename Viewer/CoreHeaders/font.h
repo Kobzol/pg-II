@@ -101,6 +101,11 @@ public:
 	bool resize(const glm::uint32_t newFontSize);
 	void setColor(const float r, const float g, const float b, const float a);
 
+	Glyph* getGlyph(char c)
+	{
+		return glyphs + (c - ' ');
+	}
+
 	static bool initLibrary();
 };
 
