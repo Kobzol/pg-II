@@ -394,8 +394,9 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\quad_screen.vert" />
     <None Include="Resources\shaders\quad_select.frag" />
     <None Include="Resources\shaders\quad_texture.frag" />
+    <None Include="Resources\shaders\quad_text_blend.frag" />
     <None Include="Resources\shaders\quad_voronoi.frag" />
-    <None Include="Resources\shaders\quad_wave.frag" />
+    <None Include="Resources\shaders\quad_text_interference.frag" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
     <None Include="Resources\shaders\simple_v3_c4.vert" />
     <None Include="Resources\shaders\ads_v3_c4_n3_t2.frag" />

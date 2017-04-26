@@ -2,10 +2,7 @@
 
 layout(location = 0) out vec4 FragColor;
 
-uniform sampler2D Frame1;
-uniform sampler2D Frame2;
-
-uniform float StampDecayRatio;
+uniform sampler2D Frame;
 uniform float InterferenceRatio;
 
 in vec2 texCoords;
@@ -32,15 +29,16 @@ void main()
 
 		vec2 coords2 = texCoords;
 		coords2.x -= 0.01f * InterferenceRatio;
-		vec4 offsetColor = texture(Frame1, coords2);
+
+		vec4 offsetColor = texture(Frame, coords2);
 		if (offsetColor.r > minOffsetInvert || offsetColor.g > minOffsetInvert || offsetColor.b > minOffsetInvert)
 		{
 			offsetColor += InterferenceRatio;
 		}
 
-		color = mix(texture(Frame1, coords), offsetColor, 0.5f);
+		color = mix(texture(Frame, coords), offsetColor, 0.5f);
 	}
-	else color = texture(Frame1, coords);
+	else color = texture(Frame, coords);
 	
 	FragColor = color;
 }

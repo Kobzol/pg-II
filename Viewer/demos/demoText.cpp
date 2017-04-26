@@ -23,7 +23,8 @@ static int MODEL_SPHERE;
 static int SHADER_SIMPLE;
 static int SHADER_PHONG;
 static int SHADER_TEXT;
-static int SHADER_QUAD_TEXTURE;
+static int SHADER_QUAD_INTERFERENCE;
+static int SHADER_QUAD_BLEND;
 
 static int VAO_INFO[2];
 static int VAO_SPHERE;
@@ -40,8 +41,11 @@ static QuadEntity* ENTITY_QUAD;
 static Camera* ORTHO_CAMERA;
 
 static Text* font;
-static Framebuffer* FBOS[2];
-static int activeFBO = 0;
+#define FBO_COUNT (3)
+static Framebuffer* FBOS[FBO_COUNT];
+static int FBO_TEXT = 0;
+static int FBO_EFFECT = 1;
+static int FBO_ACCUM = 2;
 static TextGenerator* textGenerator;
 
 const int TEXT_HEIGHT = 1024;
@@ -50,6 +54,8 @@ static float TEXT_SCALE = 0.3f;
 static float TEXT_SPACE_VERTICAL;
 static float TEXT_SPACE_HORIZONTAL;
 static float TEXT_COLS = 80;
+static float TEXT_ACCUM_DECAY_SPEED = 1.0f;
+#define DRAW_INTERFERENCE
 
 float textSpeed = 50.0f;
 float textInterference = 0.0f;
@@ -69,8 +75,11 @@ void DemoText::initShaders()
 	SHADER_TEXT = m_sceneData->shaderPrograms.size();
 	initShaderProgram("text.vert", "text.frag");
 
-	SHADER_QUAD_TEXTURE = m_sceneData->shaderPrograms.size();
-	initShaderProgram("quad_screen.vert", "quad_wave.frag");
+	SHADER_QUAD_INTERFERENCE = m_sceneData->shaderPrograms.size();
+	initShaderProgram("quad_screen.vert", "quad_text_interference.frag");
+
+	SHADER_QUAD_BLEND = m_sceneData->shaderPrograms.size();
+	initShaderProgram("quad_screen.vert", "quad_text_blend.frag");
 
 	resetResPath();
 }
@@ -233,7 +242,7 @@ void DemoText::initFBOs()
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < FBO_COUNT; i++)
 	{
 		FBOS[i] = new Framebuffer();
 		FBOS[i]->createAttachments(TEXT_WIDTH, TEXT_HEIGHT);
@@ -309,10 +318,96 @@ void DemoText::renderText(const TextColumn& text, float x, float y, float scale,
 	ss->m_activeCamera = camera;
 }
 
-static default_random_engine generators[2];
-static uniform_real_distribution<float> interWaitDistribution{ 1.0f, 4.0f };
-static uniform_real_distribution<float> interApplyDistribution{ 0.2f, 0.4f };
-static bool lastInterference = false;
+float DemoText::updateText(float delta)
+{
+	textGenerator->update(delta * textSpeed);
+	float interferenceRatio = 0.0f;
+	if (interferenceCycle.isActive(1))
+	{
+		interferenceRatio = interferenceCycle.getRatio();
+		lastInterference = true;
+	}
+	else if (lastInterference)
+	{
+		lastInterference = false;
+		interferenceCycle.timers[0] = Timer(interWaitDistribution(generators[0]));
+		//interferenceCycle.timers[1] = Timer(interApplyDistribution(generators[1]));
+	}
+
+	if (textInterference > 0.0f)
+	{
+		interferenceRatio = textInterference;
+	}
+
+	return interferenceRatio;
+}
+
+static void enableFBO(int fbo)
+{
+	FBOS[fbo]->bind();
+	FBOS[fbo]->setViewport();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+static void disableFBO(int fbo)
+{
+	SceneSetting *ss = SceneSetting::GetInstance();
+	FBOS[fbo]->unbind();
+	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
+}
+
+void DemoText::drawText()
+{
+	enableFBO(FBO_TEXT);
+
+	float x = 0.0f;
+	for (auto& col : textGenerator->matrix)
+	{
+		renderText(col, x, TEXT_HEIGHT - col.y, TEXT_SCALE, TEXT_SPACE_VERTICAL);
+		x += TEXT_SPACE_HORIZONTAL;
+	}
+
+	disableFBO(FBO_TEXT);
+}
+void DemoText::drawEffect(float interferenceRatio, int fbo)
+{
+	enableFBO(fbo);
+
+	SceneSetting *ss = SceneSetting::GetInstance();
+	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_INTERFERENCE];
+	ss->m_activeShader->enable();
+
+	Uniform<float>::bind("InterferenceRatio", ss, interferenceRatio);
+	Uniform<int>::bind("Frame", ss, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, FBOS[FBO_TEXT]->texture);
+	ENTITY_QUAD->draw();
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	disableFBO(fbo);
+}
+void DemoText::drawScreen(float delta)
+{
+	SceneSetting *ss = SceneSetting::GetInstance();
+	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_BLEND];
+	ss->m_activeShader->enable();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	Uniform<float>::bind("AccumDecayRatio", ss, this->accumDecayRatio);
+	Uniform<int>::bind("Frame", ss, 0);
+	Uniform<int>::bind("FrameAccum", ss, 1);
+
+	for (int i = 1; i < 3; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + (i - 1));
+		glBindTexture(GL_TEXTURE_2D, FBOS[i]->texture);
+	}
+	
+	ENTITY_QUAD->draw();
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
 
 void DemoText::render()
 {
@@ -334,69 +429,31 @@ void DemoText::render()
 	}
 
 	// update text
-	textGenerator->update(delta * textSpeed);
+	this->accumDecayRatio -= delta * TEXT_ACCUM_DECAY_SPEED;
+	this->accumDecayRatio = std::max(0.0f, this->accumDecayRatio);
 
-	float interferenceRatio = 0.0f;
-	if (interferenceCycle.isActive(1))
-	{
-		interferenceRatio = interferenceCycle.getRatio();
-		lastInterference = true;
-	}
-	else if (lastInterference)
-	{
-		activeFBO = 1;
-		lastInterference = false;
-		interferenceCycle.timers[0] = Timer(interWaitDistribution(generators[0]));
-		//interferenceCycle.timers[1] = Timer(interApplyDistribution(generators[1]));
-	}
+	bool effectPeak = this->lastInterference;
+	float interferenceRatio = this->updateText(delta);
 
-	if (textInterference > 0.0f)
-	{
-		interferenceRatio = textInterference;
-	}
+#ifndef DRAW_INTERFERENCE
+	interferenceRatio = 0.0f;
+#endif
 
 	// draw text
-	FBOS[activeFBO]->bind();
-	FBOS[activeFBO]->setViewport();
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	this->drawText();
 
-	float x = 0.0f;
+	// draw interference
+	this->drawEffect(interferenceRatio, FBO_EFFECT);
 
-	for (auto& col : textGenerator->matrix)
+#ifdef DRAW_INTERFERENCE
+	if (textInterference == 0.0f && effectPeak && effectPeak != this->lastInterference)
 	{
-		renderText(col, x, TEXT_HEIGHT - col.y, TEXT_SCALE, TEXT_SPACE_VERTICAL);
-		x += TEXT_SPACE_HORIZONTAL;
+		this->accumDecayRatio = 1.0f;
+		this->drawEffect(1.0f, FBO_ACCUM);
 	}
+#endif
 
-	FBOS[activeFBO]->unbind();
-	activeFBO = 0;
-
-	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
-	glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	// draw quad
-	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_TEXTURE];
-	ss->m_activeShader->enable();
-
-	Uniform<float>::bind("InterferenceRatio", ss, interferenceRatio);
-
-	float stampDecayRatio = 1.0f;
-	if (interferenceCycle.isActive(0))
-	{
-		stampDecayRatio = interferenceCycle.getRatio();
-	}
-	Uniform<float>::bind("StampDecayRatio", ss, stampDecayRatio);
-	Uniform<int>::bind("Frame1", ss, 0);
-
-	for (int i = 0; i < 2; i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, FBOS[i]->texture);
-	}
-	
-	ENTITY_QUAD->draw();
-	glBindTexture(GL_TEXTURE_2D, 0);
+	// draw screen
+	this->drawScreen(delta);
 #pragma endregion
 }

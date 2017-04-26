@@ -207,6 +207,7 @@
     <None Include="Resources\shaders\quad_screen.vert" />
     <None Include="Resources\shaders\parallax_diff_mapping.frag" />
     <None Include="Resources\shaders\texture_v3_n3_t3.frag" />
-    <None Include="Resources\shaders\quad_wave.frag" />
+    <None Include="Resources\shaders\quad_text_blend.frag" />
+    <None Include="Resources\shaders\quad_text_interference.frag" />
   </ItemGroup>
 </Project>
