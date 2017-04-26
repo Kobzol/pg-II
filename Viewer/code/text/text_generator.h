@@ -5,68 +5,119 @@
 #include <random>
 #include <ctime>
 
-static std::default_random_engine generator;
-static std::uniform_int_distribution<int> charDistribution(32, 126);
-static std::uniform_int_distribution<int> spaceDistribution(0, 100);
-static std::normal_distribution<float> sentenceLength(4.0f, 6.0f);
-static std::normal_distribution<float> spaceLength(3.0f, 1.0f);
-static float spaceChance = 0.4f;
-
 struct TextParticle
 {
 public:
 	char character;
 	float life;
+	glm::vec3 color;
+};
+struct TextColumn
+{
+public:
+	float y;
+	std::vector<TextParticle> particles;
+	float speed;
 };
 
 class TextGenerator
 {
 public:
-	TextGenerator(int rows, int cols) : rows(rows), cols(cols)
+	TextGenerator(int cols, int height, float textHeight)
+		: cols(cols), height(height), verticalOffsetDistribution(0, height / 5.0f), textHeight(textHeight)
 	{
 		for (int i = 0; i < cols; i++)
 		{
-			this->matrix.push_back(std::string(rows, 'a'));
+			this->matrix.push_back({ 0.0f, {}, 0.0f });
 		}
 
-		this->permute();
+		for (int i = 0; i < 3; i++)
+		{
+			this->generators[i].seed((unsigned int) time(nullptr) + i);
+		}
+
+		this->initText();
 	}
 
-	void permute()
+	void update(float delta)
 	{
-		generator.seed((unsigned int) time(nullptr));
-
 		for (auto& col : this->matrix)
 		{
-			size_t i = 0;
-			while (i < col.size())
+			col.y += delta * col.speed;
+			if (col.y < this->height)
 			{
-				int sentence = std::max(1.0f, sentenceLength(generator));
-				while (i < col.size() && sentence--)
+				for (auto& particle : col.particles)
 				{
-					col[i++] = charDistribution(generator);
-				}
-				int space = std::max(1.0f, spaceLength(generator));
-				while (i < col.size() && space--)
-				{
-					col[i++] = ' ';
+					if (this->flipCharacterDistribution(this->generators[4]) < 2)
+					{
+						particle.character = this->generateChar();
+					}
 				}
 			}
+			else this->spawnColumn(col);
 		}
 	}
 
-	void move()
+	std::vector<TextColumn> matrix;
+	int cols;
+	int height;
+	float textHeight;
+
+private:
+	std::default_random_engine generators[6];
+	std::uniform_int_distribution<int> charDistribution{ 48, 126 };
+	std::uniform_real_distribution<float> sentenceLengthDistribution{ 5.0f, 30.0f };
+	std::uniform_int_distribution<int> spawnColumnDistribution{ 0, 100 };
+	std::uniform_real_distribution<float> verticalOffsetDistribution;
+	std::uniform_int_distribution<int> flipCharacterDistribution{ 0, 100 };
+	std::uniform_real_distribution<float> textSpeedDistribution{ 1.0f, 3.0f };
+
+	void initText()
 	{
-		for (size_t i = 0; i < this->matrix.size(); i++)
+		for (auto& col : this->matrix)
 		{
-			size_t length = this->matrix[i].size();
-			for (size_t j = 0; j < length; j++)
-			{
-				std::swap(this->matrix[i][length - 1], this->matrix[i][j]);
-			}
+			this->spawnColumn(col, true);
 		}
 	}
+	void spawnColumn(TextColumn& col, bool randomHeight = false)
+	{
+		int sentence = std::max(1.0f, this->sentenceLengthDistribution(this->generators[1]));
+		float delta = 1.0f / (float) sentence;
+		float alpha = 0.25f;
 
-	std::vector<std::string> matrix;
-	int rows, cols;
+		const glm::vec3 startColor(0.0f, 0.6f, 0.0f);
+		const glm::vec3 endColor(1.0f, 1.0f, 1.0f);
+		const float endColorRatioStart = 0.65;
+
+		col.particles.clear();
+
+		for (int i = 0; i < sentence; i++)
+		{
+			TextParticle particle;
+			particle.life = std::min(1.0f, alpha);
+			alpha += (delta * 2.0f);
+			particle.character = this->generateChar();
+
+			float ratio = ((float) i) / sentence;
+
+			if (ratio < endColorRatioStart)
+			{
+				particle.color = startColor;
+			}
+			else particle.color = glm::mix(startColor, endColor, (ratio - endColorRatioStart) / (1.0f - endColorRatioStart));
+
+			col.particles.push_back(particle);
+		}
+
+		col.y = randomHeight ? (this->verticalOffsetDistribution(this->generators[3])) : (-this->textHeight * sentence) * 1.25f;
+		col.speed = this->generateSpeed();
+	}
+	char generateChar()
+	{
+		return this->charDistribution(this->generators[0]);
+	}
+	float generateSpeed()
+	{
+		return this->textSpeedDistribution(this->generators[5]);
+	}
 };

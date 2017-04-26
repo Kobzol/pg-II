@@ -16,7 +16,6 @@
 #include "../code/text/text.h"
 #include "../code/uniform.h"
 #include "../code/framebuffer/framebuffer.h"
-#include "../code/text/text_generator.h"
 #include "../code/timer.h"
 #include <sceneManager.h>
 
@@ -41,8 +40,15 @@ static Camera* ORTHO_CAMERA;
 
 static Text* font;
 static Framebuffer* FBO;
-static TextGenerator textGenerator(50, 50);
-static Timer matrixTextTimer(0.1f);
+static TextGenerator* textGenerator;
+
+const int TEXT_HEIGHT = 1024;
+const int TEXT_WIDTH = TEXT_HEIGHT;
+float textSpeed = 100.0f;
+static float TEXT_SCALE = 0.3f;
+static float TEXT_SPACE_VERTICAL;
+static float TEXT_SPACE_HORIZONTAL;
+static float TEXT_COLS = 20;
 
 void DemoText::initShaders()
 {
@@ -209,16 +215,25 @@ void DemoText::initCameras()
 void DemoText::initFonts()
 {
 	font = new Text("Resources/fonts/matrix.ttf");
+	
+	TEXT_SPACE_VERTICAL = TEXT_HEIGHT / (25.0f * TEXT_SCALE);
+
+	const float charWidth = 16.0f;
+	const float charArea = TEXT_COLS * charWidth;
+	const float remainingArea = TEXT_WIDTH - charArea;
+
+	TEXT_SPACE_HORIZONTAL = (remainingArea / TEXT_COLS) * (6.0f * TEXT_SCALE);
+	textGenerator = new TextGenerator(TEXT_COLS, TEXT_HEIGHT, TEXT_SPACE_VERTICAL / 4.0f);
 }
 
 void DemoText::initFBOs()
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
 	FBO = new Framebuffer();
-	FBO->createAttachments(ss->m_screen[0] * 2, ss->m_screen[1] * 2);
+	FBO->createAttachments(TEXT_WIDTH, TEXT_HEIGHT);
 }
 
-void DemoText::renderText(const std::string& text, float x, float y, float scale, float space, glm::vec3 color)
+void DemoText::renderText(const TextColumn& text, float x, float y, float scale, float space)
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
 	Camera* camera = ss->m_activeCamera;
@@ -234,41 +249,47 @@ void DemoText::renderText(const std::string& text, float x, float y, float scale
 	glm::mat4 projection = glm::ortho(0.0f, (float) ss->m_screen[0], 0.0f, (float) ss->m_screen[1]);
 
 	Uniform<glm::mat4>::bind("TextProjection", ss->m_activeShader->m_programObject, projection);
-	Uniform<glm::vec3>::bind("TextColor", ss->m_activeShader->m_programObject, color);
 	Uniform<int>::bind("TextTexture", ss->m_activeShader->m_programObject, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO_TEXT->VAO);
 
 	// Iterate through all characters
-	for (auto c : text)
+	for (auto& c : text.particles)
 	{
-		Character ch = font->Characters[c];
+		if (c.character != ' ')
+		{
+			Character ch = font->Characters[c.character];
 
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+			GLfloat xpos = x + ch.Bearing.x * scale;
+			GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
-		// Update VBO for each character
-		GLfloat vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos,     ypos,       0.0, 1.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
+			GLfloat w = ch.Size.x * scale;
+			GLfloat h = ch.Size.y * scale;
+			// Update VBO for each character
+			GLfloat vertices[6][4] = {
+				{ xpos,     ypos + h,   0.0, 0.0 },
+				{ xpos,     ypos,       0.0, 1.0 },
+				{ xpos + w, ypos,       1.0, 1.0 },
 
-			{ xpos,     ypos + h,   0.0, 0.0 },
-			{ xpos + w, ypos,       1.0, 1.0 },
-			{ xpos + w, ypos + h,   1.0, 0.0 }
-		};
-		// Render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VAO_TEXT->VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// Render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+				{ xpos,     ypos + h,   0.0, 0.0 },
+				{ xpos + w, ypos,       1.0, 1.0 },
+				{ xpos + w, ypos + h,   1.0, 0.0 }
+			};
+			// Render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			// Update content of VBO memory
+			glBindBuffer(GL_ARRAY_BUFFER, VAO_TEXT->VBO);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			Uniform<float>::bind("TextAlpha", ss, c.life);
+			Uniform<glm::vec3>::bind("TextColor", ss, c.color);
+
+			// Render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		}
 		y -= space * scale;//(space >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	glBindVertexArray(0);
@@ -283,8 +304,7 @@ void DemoText::renderText(const std::string& text, float x, float y, float scale
 
 void DemoText::render()
 {
-	float delta = SceneManager::GetInstance()->delta * 0.5f;
-	matrixTextTimer.update(delta);
+	float delta = SceneManager::GetInstance()->delta;
 
 	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
@@ -301,34 +321,24 @@ void DemoText::render()
 		Uniform<glm::mat4>::bind("VMatrix", ss->m_activeShader->m_programObject, ss->m_activeCamera->getViewMatrix());
 	}
 
-	if (matrixTextTimer.resetIfReady())
+	textGenerator->update(delta * textSpeed);
+
+	/*FBO->bind();
+	FBO->setViewport();*/
+
+	float x = 0.0f;
+
+	for (auto& col : textGenerator->matrix)
 	{
-		FBO->bind();
-
-		FBO->setViewport();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		float x = 0.0f;
-		float y = 0.0f;
-		float scale = 0.2f;
-		float spaceVertical = (ss->m_screen[1] / (textGenerator.rows)) * (25.0f * scale);
-		float spaceHorizontal = (ss->m_screen[0] / (textGenerator.cols)) * (6.0f * scale);
-
-		textGenerator.move();
-
-		for (auto& col : textGenerator.matrix)
-		{
-			renderText(col, x, ss->m_screen[1] - y, scale, spaceVertical, glm::vec3(0.0f, 0.6f, 0.0f));
-			x += spaceHorizontal;
-		}
-
-		FBO->unbind();
-
-		glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
-		glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		renderText(col, x, TEXT_HEIGHT - col.y, TEXT_SCALE, TEXT_SPACE_VERTICAL);
+		x += TEXT_SPACE_HORIZONTAL;
 	}
+
+	/*FBO->unbind();
+
+	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
+	glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
 
 	for (int i = 0; i < SCENE_ENTITIES.size(); i++)
 	{
@@ -340,7 +350,7 @@ void DemoText::render()
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, FBO->texture);
-		e->draw();
+		//e->draw();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

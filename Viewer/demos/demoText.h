@@ -4,6 +4,8 @@
 #include <string>
 #include <glm.hpp>
 
+#include "../code/text/text_generator.h"
+
 class DemoText : public SceneInitializer
 {
 private:
@@ -23,10 +25,14 @@ private:
 		
 	}
 
-	void renderText(const std::string& text, float x, float y, float scale, float space, glm::vec3 color);
+	void renderText(const TextColumn& text, float x, float y, float scale, float space);
 
 public:
 	DemoText(SceneData *sdPtr) : SceneInitializer(sdPtr) {}
 
 	void render();
+	glm::vec4 getClearColor() override
+	{
+		return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 };

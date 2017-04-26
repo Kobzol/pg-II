@@ -87,6 +87,12 @@ public:
 			m_sceneData->sceneEntities[i]->draw(i);
 	}
 
+	virtual glm::vec4 getClearColor()
+	{
+		SceneSetting* ss = SceneSetting::GetInstance();
+		return glm::vec4(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
+	}
+
 protected:
 	SceneInitializer(SceneData *sdPtr) : m_sceneData(sdPtr)
 	{
