@@ -32,3 +32,7 @@ float Timer::getElapsed()
 {
 	return this->elapsedTime;
 }
+float Timer::getRatio()
+{
+	return this->elapsedTime / this->cooldownTime;
+}

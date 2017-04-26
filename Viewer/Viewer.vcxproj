@@ -274,6 +274,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\cycle.cpp" />
     <ClCompile Include="code\framebuffer\framebuffer.cpp" />
     <ClCompile Include="code\timer.cpp" />
     <ClCompile Include="code\uniform.cpp" />
@@ -296,6 +297,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="sceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="code\cycle.h" />
     <ClInclude Include="code\framebuffer\framebuffer.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraEntity.h" />
     <ClInclude Include="code\tetrahedra\TetrahedraVAO.h" />
@@ -393,6 +395,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\quad_select.frag" />
     <None Include="Resources\shaders\quad_texture.frag" />
     <None Include="Resources\shaders\quad_voronoi.frag" />
+    <None Include="Resources\shaders\quad_wave.frag" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
     <None Include="Resources\shaders\simple_v3_c4.vert" />
     <None Include="Resources\shaders\ads_v3_c4_n3_t2.frag" />

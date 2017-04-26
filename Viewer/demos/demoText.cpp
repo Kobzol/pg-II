@@ -16,7 +16,7 @@
 #include "../code/text/text.h"
 #include "../code/uniform.h"
 #include "../code/framebuffer/framebuffer.h"
-#include "../code/timer.h"
+#include "../code/cycle.h"
 #include <sceneManager.h>
 
 static int MODEL_SPHERE;
@@ -36,19 +36,25 @@ static int MATERIAL_SPHERE;
 static int INFO_ENTITIES[2];
 static std::vector<int> SCENE_ENTITIES;
 static Entity* ENTITY_SPHERE;
+static QuadEntity* ENTITY_QUAD;
 static Camera* ORTHO_CAMERA;
 
 static Text* font;
-static Framebuffer* FBO;
+static Framebuffer* FBOS[2];
+static int activeFBO = 0;
 static TextGenerator* textGenerator;
 
 const int TEXT_HEIGHT = 1024;
 const int TEXT_WIDTH = TEXT_HEIGHT;
-float textSpeed = 100.0f;
 static float TEXT_SCALE = 0.3f;
 static float TEXT_SPACE_VERTICAL;
 static float TEXT_SPACE_HORIZONTAL;
-static float TEXT_COLS = 20;
+static float TEXT_COLS = 80;
+
+float textSpeed = 50.0f;
+float textInterference = 0.0f;
+
+static Cycle interferenceCycle{ 2.0f, 0.4f };
 
 void DemoText::initShaders()
 {
@@ -64,7 +70,7 @@ void DemoText::initShaders()
 	initShaderProgram("text.vert", "text.frag");
 
 	SHADER_QUAD_TEXTURE = m_sceneData->shaderPrograms.size();
-	initShaderProgram("quad.vert", "quad_texture.frag");
+	initShaderProgram("quad_screen.vert", "quad_wave.frag");
 
 	resetResPath();
 }
@@ -178,7 +184,7 @@ void DemoText::initInfoEntities()
 
 void DemoText::initSceneEntities()
 {
-	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[MODEL_SPHERE], m_sceneData->vaos[VAO_SPHERE]);
+	/*Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[MODEL_SPHERE], m_sceneData->vaos[VAO_SPHERE]);
 	obj->setPosition(0.0f, 0.0f, 0.0f);
 	obj->setOrientation(0.0f, 0.0f, 0.0f);
 	obj->m_material = m_sceneData->materials[MATERIAL_SPHERE];
@@ -187,16 +193,18 @@ void DemoText::initSceneEntities()
 	SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
 	m_sceneData->sceneEntities.push_back(obj);
 
-	ENTITY_SPHERE = obj;
+	ENTITY_SPHERE = obj;*/
 
-	/*QuadEntity* quad = new QuadEntity(m_sceneData->vaos[VAO_QUAD]);
+	QuadEntity* quad = new QuadEntity(m_sceneData->vaos[VAO_QUAD]);
 	quad->setPosition(0.0f, 0.0f, 0.0f);
 	quad->setOrientation(0.0f, 0.0f, 0.0f);
 	quad->m_material = m_sceneData->materials[MATERIAL_SPHERE];
 	quad->init();
 
 	SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
-	m_sceneData->sceneEntities.push_back(quad);*/
+	m_sceneData->sceneEntities.push_back(quad);
+
+	ENTITY_QUAD = quad;
 }
 
 void DemoText::initCameras()
@@ -216,21 +224,20 @@ void DemoText::initFonts()
 {
 	font = new Text("Resources/fonts/matrix.ttf");
 	
-	TEXT_SPACE_VERTICAL = TEXT_HEIGHT / (25.0f * TEXT_SCALE);
-
-	const float charWidth = 16.0f;
-	const float charArea = TEXT_COLS * charWidth;
-	const float remainingArea = TEXT_WIDTH - charArea;
-
-	TEXT_SPACE_HORIZONTAL = (remainingArea / TEXT_COLS) * (6.0f * TEXT_SCALE);
+	TEXT_SPACE_VERTICAL = TEXT_HEIGHT / (55.0f * TEXT_SCALE);
+	TEXT_SPACE_HORIZONTAL = (TEXT_WIDTH / TEXT_COLS);
 	textGenerator = new TextGenerator(TEXT_COLS, TEXT_HEIGHT, TEXT_SPACE_VERTICAL / 4.0f);
 }
 
 void DemoText::initFBOs()
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
-	FBO = new Framebuffer();
-	FBO->createAttachments(TEXT_WIDTH, TEXT_HEIGHT);
+
+	for (int i = 0; i < 2; i++)
+	{
+		FBOS[i] = new Framebuffer();
+		FBOS[i]->createAttachments(TEXT_WIDTH, TEXT_HEIGHT);
+	}
 }
 
 void DemoText::renderText(const TextColumn& text, float x, float y, float scale, float space)
@@ -283,7 +290,7 @@ void DemoText::renderText(const TextColumn& text, float x, float y, float scale,
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-			Uniform<float>::bind("TextAlpha", ss, c.life);
+			Uniform<float>::bind("TextAlpha", ss, c.alpha);
 			Uniform<glm::vec3>::bind("TextColor", ss, c.color);
 
 			// Render quad
@@ -302,15 +309,20 @@ void DemoText::renderText(const TextColumn& text, float x, float y, float scale,
 	ss->m_activeCamera = camera;
 }
 
+static default_random_engine generators[2];
+static uniform_real_distribution<float> interWaitDistribution{ 1.0f, 4.0f };
+static uniform_real_distribution<float> interApplyDistribution{ 0.2f, 0.4f };
+static bool lastInterference = false;
+
 void DemoText::render()
 {
 	float delta = SceneManager::GetInstance()->delta;
+	interferenceCycle.update(delta);
 
 	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
 
 #pragma region Draw Scene Entities
-
 	for (int i = 0; i < m_sceneData->shaderPrograms.size(); i++)
 	{
 		ss->m_activeShader = m_sceneData->shaderPrograms[i];
@@ -321,10 +333,33 @@ void DemoText::render()
 		Uniform<glm::mat4>::bind("VMatrix", ss->m_activeShader->m_programObject, ss->m_activeCamera->getViewMatrix());
 	}
 
+	// update text
 	textGenerator->update(delta * textSpeed);
 
-	/*FBO->bind();
-	FBO->setViewport();*/
+	float interferenceRatio = 0.0f;
+	if (interferenceCycle.isActive(1))
+	{
+		interferenceRatio = interferenceCycle.getRatio();
+		lastInterference = true;
+	}
+	else if (lastInterference)
+	{
+		activeFBO = 1;
+		lastInterference = false;
+		interferenceCycle.timers[0] = Timer(interWaitDistribution(generators[0]));
+		//interferenceCycle.timers[1] = Timer(interApplyDistribution(generators[1]));
+	}
+
+	if (textInterference > 0.0f)
+	{
+		interferenceRatio = textInterference;
+	}
+
+	// draw text
+	FBOS[activeFBO]->bind();
+	FBOS[activeFBO]->setViewport();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	float x = 0.0f;
 
@@ -334,25 +369,34 @@ void DemoText::render()
 		x += TEXT_SPACE_HORIZONTAL;
 	}
 
-	/*FBO->unbind();
+	FBOS[activeFBO]->unbind();
+	activeFBO = 0;
 
 	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
 	glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);*/
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	for (int i = 0; i < SCENE_ENTITIES.size(); i++)
+	// draw quad
+	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_TEXTURE];
+	ss->m_activeShader->enable();
+
+	Uniform<float>::bind("InterferenceRatio", ss, interferenceRatio);
+
+	float stampDecayRatio = 1.0f;
+	if (interferenceCycle.isActive(0))
 	{
-		ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_PHONG];
-		ss->m_activeShader->enable();
-
-		e = m_sceneData->sceneEntities[SCENE_ENTITIES[i]];
-		Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, FBO->texture);
-		//e->draw();
-		glBindTexture(GL_TEXTURE_2D, 0);
+		stampDecayRatio = interferenceCycle.getRatio();
 	}
+	Uniform<float>::bind("StampDecayRatio", ss, stampDecayRatio);
+	Uniform<int>::bind("Frame1", ss, 0);
 
+	for (int i = 0; i < 2; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, FBOS[i]->texture);
+	}
+	
+	ENTITY_QUAD->draw();
+	glBindTexture(GL_TEXTURE_2D, 0);
 #pragma endregion
 }

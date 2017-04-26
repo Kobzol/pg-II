@@ -31,6 +31,7 @@
     <ClCompile Include="code\timer.cpp" />
     <ClCompile Include="demos\demoExplode.cpp" />
     <ClCompile Include="demos\demoVoronoi.cpp" />
+    <ClCompile Include="code\cycle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -170,6 +171,7 @@
     <ClInclude Include="code\timer.h" />
     <ClInclude Include="demos\demoExplode.h" />
     <ClInclude Include="demos\demoVoronoi.h" />
+    <ClInclude Include="code\cycle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\simple_v3_c4.vert" />
@@ -205,5 +207,6 @@
     <None Include="Resources\shaders\quad_screen.vert" />
     <None Include="Resources\shaders\parallax_diff_mapping.frag" />
     <None Include="Resources\shaders\texture_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\quad_wave.frag" />
   </ItemGroup>
 </Project>

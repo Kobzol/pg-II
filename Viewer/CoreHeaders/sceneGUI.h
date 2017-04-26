@@ -21,7 +21,9 @@ extern float displacementFactor;
 
 extern unsigned int activeDemo;
 extern float voronoiScale;
+
 extern float textSpeed;
+extern float textInterference;
 
 static class SceneGUI
 {
@@ -81,7 +83,9 @@ inline TwBar* SceneGUI::createBar()
 	TwAddVarRW(bar, "DisplacementFactor", TW_TYPE_FLOAT, &displacementFactor, " min=0 max=2.0 step=0.1 label='Tessellation displacement factor' ");
 
 	TwAddVarRW(bar, "VoronoiScale", TW_TYPE_FLOAT, &voronoiScale, " min=1.0 max=100.0 step=1.0 label='Voronoi scale' ");
+
 	TwAddVarRW(bar, "TextSpeed", TW_TYPE_FLOAT, &textSpeed, " min=1.0 max=250.0 step=10.0 label='Text speed' ");
+	TwAddVarRW(bar, "TextInterference", TW_TYPE_FLOAT, &textInterference, " min=0.0 max=4.0 step=0.1 label='Text interference' ");
 
 	TwAddVarRW(bar, "ActiveDemo", TW_TYPE_UINT32, &activeDemo, " min=0 max=4 step=1 label='Active demo'");
 

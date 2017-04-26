@@ -12,6 +12,7 @@ public:
 	void reset();
 
 	float getElapsed();
+	float getRatio();
 
 private:
 	float elapsedTime;

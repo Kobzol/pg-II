@@ -9,7 +9,7 @@ struct TextParticle
 {
 public:
 	char character;
-	float life;
+	float alpha;
 	glm::vec3 color;
 };
 struct TextColumn
@@ -48,7 +48,7 @@ public:
 			{
 				for (auto& particle : col.particles)
 				{
-					if (this->flipCharacterDistribution(this->generators[4]) < 2)
+					if (this->flipCharacterDistribution(this->generators[4]) < 1)
 					{
 						particle.character = this->generateChar();
 					}
@@ -66,7 +66,7 @@ public:
 private:
 	std::default_random_engine generators[6];
 	std::uniform_int_distribution<int> charDistribution{ 48, 126 };
-	std::uniform_real_distribution<float> sentenceLengthDistribution{ 5.0f, 30.0f };
+	std::uniform_real_distribution<float> sentenceLengthDistribution{ 15.0f, 45.0f };
 	std::uniform_int_distribution<int> spawnColumnDistribution{ 0, 100 };
 	std::uniform_real_distribution<float> verticalOffsetDistribution;
 	std::uniform_int_distribution<int> flipCharacterDistribution{ 0, 100 };
@@ -94,7 +94,7 @@ private:
 		for (int i = 0; i < sentence; i++)
 		{
 			TextParticle particle;
-			particle.life = std::min(1.0f, alpha);
+			particle.alpha = std::min(1.0f, alpha);
 			alpha += (delta * 2.0f);
 			particle.character = this->generateChar();
 
