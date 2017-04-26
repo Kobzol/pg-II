@@ -20,6 +20,6 @@
 
 //#define LOAD_DEMO DemoSelect(m_sceneData)
 
-#define DEMOS(data) { new DemoText(data), new DemoVoronoi(data), new DemoSelect(data), new DemoExplode(data) }
+#define DEMOS(data) { new DemoText(data), new DemoSelect(data), new DemoVoronoi(data), new DemoExplode(data) }
 
 #endif

@@ -12,6 +12,13 @@ static std::normal_distribution<float> sentenceLength(4.0f, 6.0f);
 static std::normal_distribution<float> spaceLength(3.0f, 1.0f);
 static float spaceChance = 0.4f;
 
+struct TextParticle
+{
+public:
+	char character;
+	float life;
+};
+
 class TextGenerator
 {
 public:
@@ -34,9 +41,6 @@ public:
 			size_t i = 0;
 			while (i < col.size())
 			{
-				/*bool space = spaceDistribution(generator) < (spaceChance * 100.0f);
-				char c = space ? ' ' : (charDistribution(generator));
-				col[i] = c;*/
 				int sentence = std::max(1.0f, sentenceLength(generator));
 				while (i < col.size() && sentence--)
 				{

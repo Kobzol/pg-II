@@ -63,6 +63,8 @@ public:
 	}
 
 	virtual void setPosition(const float x, const float y, const float z);
+	glm::vec3 getPosition();
+
 	virtual void setScale(const float sx, const float sy, const float sz);
 	virtual void setOrientation(const float pitchDegrees, const float headingDegrees, const float rollDegrees);
 
@@ -81,6 +83,14 @@ inline void Entity::setPosition(const float x, const float y, const float z)
 	m_modelMatrix[3][0] = m_position.x;
 	m_modelMatrix[3][1] = m_position.y;
 	m_modelMatrix[3][2] = m_position.z;
+}
+inline glm::vec3 Entity::getPosition()
+{
+	return glm::vec3(
+		m_modelMatrix[3][0],
+		m_modelMatrix[3][1],
+		m_modelMatrix[3][2]
+	);
 }
 
 inline void Entity::setScale(const float sx, const float sy, const float sz) 

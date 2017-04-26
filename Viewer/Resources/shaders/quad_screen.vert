@@ -9,7 +9,7 @@ out vec2 centerVector;
 void main()
 {
 	texCoords = VertexTex;
-	centerVector = VertexPosition.xy * 2;
+	centerVector = VertexPosition.xy;
 
-	gl_Position = vec4(VertexPosition * 2, 1.0);
+	gl_Position = vec4(VertexPosition, 1.0);
 }

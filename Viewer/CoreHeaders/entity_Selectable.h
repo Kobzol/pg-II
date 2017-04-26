@@ -7,8 +7,8 @@
 class EntitySelectable : public Entity
 {
 public:
-	EntitySelectable(Entity* entity, ShaderProgram* constShader, QuadEntity* quadEntity, ShaderProgram* quadShader)
-		: entity(entity), constShader(constShader), quadEntity(quadEntity), quadShader(quadShader)
+	EntitySelectable(Entity* entity, ShaderProgram* constShader, QuadEntity* quadEntity, ShaderProgram* quadShader, GLuint objectTexture, GLuint surroundTexture)
+		: entity(entity), constShader(constShader), quadEntity(quadEntity), quadShader(quadShader), objectTexture(objectTexture), surroundTexture(surroundTexture)
 	{
 
 	}
@@ -22,7 +22,7 @@ public:
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_ALWAYS, 1, 0xFF);
+		glStencilFunc(GL_ALWAYS, this->id, 0xFF);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 		glStencilMask(0xFF);
 
@@ -38,30 +38,38 @@ public:
 
 			Uniform<glm::vec4>::bind("color", ss->m_activeShader->m_programObject, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilFunc(GL_NOTEQUAL, this->id, 0xFF);
 			//glStencilMask(0x00);
 			glDisable(GL_DEPTH_TEST);
 
-			this->entity->setScale(scale.x * this->scale.x, scale.y * this->scale.y, scale.z * this->scale.z);
+			glm::vec3 position = this->entity->getPosition();
+
+			glm::quat rotation = glm::rotate(glm::quat(), this->counter * 0.25f, glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat4 model = glm::translate(glm::mat4(), position);
+			model *= glm::mat4_cast(rotation);
+			model = glm::scale(model, glm::vec3(scale.x * this->scale.x, scale.y * this->scale.y, scale.z * this->scale.z));
+
+			this->entity->m_modelMatrix = model;
+
+			glBindTexture(GL_TEXTURE_2D, this->surroundTexture);
 			this->entity->draw();
-			this->entity->setScale(scale.x, scale.y, scale.z);
+			this->entity->m_modelMatrix = glm::translate(glm::mat4(), position);
 
 			glStencilMask(0xFF);
 			glEnable(GL_DEPTH_TEST);
-		}
 
-		if (this->selected)
-		{
 			ss->m_activeShader = this->quadShader;
 			ss->m_activeShader->enable();
 
-			glm::quat rotation = glm::rotate(glm::quat(), this->counter, glm::vec3(0.0f, 0.0f, 1.0f));
+			rotation = glm::rotate(glm::quat(), this->counter, glm::vec3(0.0f, 0.0f, 1.0f));
 
-			glm::mat4 model = glm::translate(glm::mat4(), glm::vec3(0.0f, 0.0f, -1.0f));
+			model = glm::translate(glm::mat4(), this->quadEntity->getPosition());
 			model *= glm::mat4_cast(rotation);
-			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 1.0f));
+			model = glm::scale(model, glm::vec3(2.0f, 2.0f, 1.0f));
 
 			this->quadEntity->m_modelMatrix = model;
+
+			glBindTexture(GL_TEXTURE_2D, this->objectTexture);
 			this->quadEntity->draw();
 		}
 
@@ -74,8 +82,12 @@ public:
 	QuadEntity* quadEntity;
 	ShaderProgram* quadShader;
 
+	GLuint objectTexture;
+	GLuint surroundTexture;
+
 	glm::vec3 scale{ 1.05f, 1.05f, 1.05f };
 	bool selected = false;
 
 	float counter = 0.0f;
+	int id = 0;
 };

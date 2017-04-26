@@ -21,6 +21,9 @@ void Framebuffer::unbind()
 
 void Framebuffer::createAttachments(int width, int height)
 {
+	this->width = width;
+	this->height = height;
+
 	this->bind();
 
 	GL_CHECK_ERRORS();
@@ -30,9 +33,9 @@ void Framebuffer::createAttachments(int width, int height)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
@@ -55,4 +58,9 @@ void Framebuffer::createAttachments(int width, int height)
 	GL_CHECK_ERRORS();
 
 	this->unbind();
+}
+
+void Framebuffer::setViewport()
+{
+	glViewport(0, 0, this->width, this->height);
 }

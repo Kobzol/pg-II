@@ -52,7 +52,7 @@ void DemoText::initShaders()
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
 	SHADER_PHONG = m_sceneData->shaderPrograms.size();
-	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
+	initShaderProgram("ads_v3_n3_t3.vert", "texture_v3_n3_t3.frag");
 
 	SHADER_TEXT = m_sceneData->shaderPrograms.size();
 	initShaderProgram("text.vert", "text.frag");
@@ -215,7 +215,7 @@ void DemoText::initFBOs()
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
 	FBO = new Framebuffer();
-	FBO->createAttachments(ss->m_screen[0], ss->m_screen[1]);
+	FBO->createAttachments(ss->m_screen[0] * 2, ss->m_screen[1] * 2);
 }
 
 void DemoText::renderText(const std::string& text, float x, float y, float scale, float space, glm::vec3 color)
@@ -304,6 +304,8 @@ void DemoText::render()
 	if (matrixTextTimer.resetIfReady())
 	{
 		FBO->bind();
+
+		FBO->setViewport();
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -322,6 +324,8 @@ void DemoText::render()
 		}
 
 		FBO->unbind();
+
+		glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
 		glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}

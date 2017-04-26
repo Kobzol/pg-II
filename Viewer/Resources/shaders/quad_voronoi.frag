@@ -4,7 +4,7 @@ layout(location = 0) out vec4 FragColor;
 
 uniform sampler2D diffuseTexture;
 
-#define MAX_POINTS 10
+#define MAX_POINTS 30
 uniform vec2 Points[MAX_POINTS];
 uniform float Time;
 uniform float VoronoiScale;
@@ -51,17 +51,25 @@ vec4 getDistColor()
 	}
 	else return vec4(minPoint.x, minPoint.y, 0.0f, 1.0f) - abs(sin(80.0f * dist)) * 0.07;
 }
-float getDistPoints()
+vec4 getDistPointsColor()
 {
 	float dist = 1.0f;
-	vec4 color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	vec2 minPoint = vec2(0.0f, 0.0f);
 
 	for (int i = 0; i < MAX_POINTS; i++)
 	{
-		dist = min(dist, distance(centerVector, Points[i]));
+		vec2 point = Points[i];
+		point = 0.5 + 0.5 * sin(Time + 6.2831 * point);
+
+		float currDist = distance(centerVector, point);
+		if (currDist < dist)
+		{
+			dist = currDist;
+			minPoint = point;
+		}
 	}
 
-	return dist;
+	return vec4(minPoint.x, minPoint.y, 0.0f, 1.0f);
 }
 
 void main()

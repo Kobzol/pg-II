@@ -25,12 +25,12 @@ static int VAO_SPHERE;
 static int VAO_QUAD;
 
 static int TEXTURE_DIFF_SPHERE;
+static int TEXTURE_DIFF_SURROUND;
 static int MATERIAL_SPHERE;
 
 static int INFO_ENTITIES[2];
 static std::vector<int> SCENE_ENTITIES;
-static EntitySelectable* ENTITY_SELECTABLE;
-static QuadEntity* ENTITY_VIEW_ANGLE;
+static EntitySelectable* ENTITY_SELECTABLE[2];
 
 void DemoSelect::initShaders()
 {
@@ -40,7 +40,7 @@ void DemoSelect::initShaders()
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
 	SHADER_PHONG = m_sceneData->shaderPrograms.size();
-	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
+	initShaderProgram("ads_v3_n3_t3.vert", "texture_v3_n3_t3.frag");
 
 	SHADER_CONST = m_sceneData->shaderPrograms.size();
 	initShaderProgram("const_v3_n3_t3.vert", "const_v3_n3_t3.frag");
@@ -119,6 +119,27 @@ void DemoSelect::initTextures()
 	TEXTURE_DIFF_SPHERE = m_sceneData->textures.size();
 	m_sceneData->textures.push_back(texID);
 
+	image = ImageManager::GenericLoader(getResFile("nx.bmp"), 0);
+
+	//TODO Create Texture:
+	glGenTextures(1, &texID);
+
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, FreeImage_GetWidth(image), FreeImage_GetHeight(image), 0, GL_BGR, GL_UNSIGNED_BYTE, FreeImage_GetBits(image));
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	//glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, 1.5f);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	FreeImage_Unload(image);
+	TEXTURE_DIFF_SURROUND = m_sceneData->textures.size();
+	m_sceneData->textures.push_back(texID);
+
 	resetResPath();
 }
 
@@ -154,26 +175,33 @@ void DemoSelect::initInfoEntities()
 
 void DemoSelect::initSceneEntities()
 {
-	Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[MODEL_SPHERE], m_sceneData->vaos[VAO_SPHERE]);
-	obj->setPosition(0.0f, 0.0, 0.0f);
-	obj->setOrientation(0.0f, 0.0f, 0.0f);
-	obj->m_material = m_sceneData->materials[MATERIAL_SPHERE];
-	obj->init();
+	for (int i = 0; i < 2; i++)
+	{
+		Entity_OBJ *obj = new Entity_OBJ(m_sceneData->models[MODEL_SPHERE], m_sceneData->vaos[VAO_SPHERE]);
+		obj->setPosition(i * 3.0f, 0.0, 0.0f);
+		obj->setOrientation(0.0f, 0.0f, 0.0f);
+		obj->m_material = m_sceneData->materials[MATERIAL_SPHERE];
+		obj->init();
 
-	QuadEntity* quad = new QuadEntity(m_sceneData->vaos[VAO_QUAD]);
-	quad->setPosition(0.0f, 0.0f, 0.0f);
-	quad->init();
-	ENTITY_VIEW_ANGLE = quad;
+		QuadEntity* quad = new QuadEntity(m_sceneData->vaos[VAO_QUAD]);
+		quad->setPosition(i * 3.0f, 0.0f, -1.0f);
+		quad->init();
 
-	EntitySelectable* selectable = new EntitySelectable(obj, m_sceneData->shaderPrograms[SHADER_CONST],
-		quad, m_sceneData->shaderPrograms[SHADER_QUAD]);
-	selectable->m_material = obj->m_material;
-	selectable->init();
+		EntitySelectable* selectable = new EntitySelectable(
+			obj, m_sceneData->shaderPrograms[SHADER_PHONG],
+			quad, m_sceneData->shaderPrograms[SHADER_QUAD],
+			m_sceneData->textures[TEXTURE_DIFF_SPHERE], m_sceneData->textures[TEXTURE_DIFF_SURROUND]
+		);
+		selectable->m_material = obj->m_material;
+		selectable->init();
 
-	SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
-	m_sceneData->sceneEntities.push_back(selectable);
+		selectable->id = i + 1;
 
-	ENTITY_SELECTABLE = selectable;
+		SCENE_ENTITIES.push_back(m_sceneData->sceneEntities.size());
+		m_sceneData->sceneEntities.push_back(selectable);
+
+		ENTITY_SELECTABLE[i] = selectable;
+	}
 }
 
 static glm::vec3 getMousePos(Camera* camera, unsigned int* screen, Mouse* mouse)
@@ -199,7 +227,17 @@ static void updatePick(Mouse* mouse)
 	glm::vec2 mousePos = glm::vec2(mouse->m_passivePosition[0], mouse->m_passivePosition[1]);
 	unsigned char value = getStencil(glm::vec2(mousePos.x, mousePos.y));
 
-	ENTITY_SELECTABLE->selected = value == 1;
+	std::cerr << (int)value << std::endl;
+
+	for (int i = 0; i < 2; i++)
+	{
+		ENTITY_SELECTABLE[i]->selected = false;
+	}
+
+	if (value > 0)
+	{
+		ENTITY_SELECTABLE[value - 1]->selected = true;
+	}
 }
 
 void DemoSelect::render()

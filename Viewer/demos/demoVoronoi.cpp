@@ -35,7 +35,7 @@ static QuadEntity* QUAD_ENTITY;
 
 static Framebuffer* FBO;
 static std::vector<glm::vec2> points;
-static int POINTS_COUNT = 10;
+static int POINTS_COUNT = 30;
 
 float voronoiScale = 10.0f;
 
@@ -48,7 +48,7 @@ void DemoVoronoi::initShaders()
 	initShaderProgram("simple_v3_c4.vert", "simple_v3_c4.frag");
 
 	SHADER_PHONG = m_sceneData->shaderPrograms.size();
-	initShaderProgram("ads_v3_n3_t3.vert", "ads_v3_n3_t3.frag");
+	initShaderProgram("ads_v3_n3_t3.vert", "texture_v3_n3_t3.frag");
 
 	SHADER_QUAD_VORONOI = m_sceneData->shaderPrograms.size();
 	initShaderProgram("quad_screen.vert", "quad_voronoi.frag");
@@ -182,10 +182,10 @@ void DemoVoronoi::initFBOs()
 {
 	SceneSetting *ss = SceneSetting::GetInstance();
 	FBO = new Framebuffer();
-	FBO->createAttachments(ss->m_screen[0], ss->m_screen[1]);
+	FBO->createAttachments(ss->m_screen[0] * 2, ss->m_screen[1] * 2);
 
 	std::default_random_engine generator;
-	std::uniform_real_distribution<float> pointsDist(-0.5f, 0.5f);
+	std::uniform_real_distribution<float> pointsDist(-1.0f, 1.0f);
 
 	for (int i = 0; i < POINTS_COUNT; i++)
 	{
@@ -193,38 +193,42 @@ void DemoVoronoi::initFBOs()
 	}
 }
 
+static float timeCounter = 0.0f;
 void DemoVoronoi::drawVoronoi()
 {
 	SceneSetting* ss = SceneSetting::GetInstance();
 
 	FBO->bind();
+
+	FBO->setViewport();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	static float time = 0.0f;
-	time += 0.01f;
 
 	ss->m_activeShader = m_sceneData->shaderPrograms[SHADER_QUAD_VORONOI];
 	ss->m_activeShader->enable();
 
-	/*for (auto& p : points)
+	for (auto& p : points)
 	{
-		p.x = 0.5f * std::sin(time * 0.02f + p.x);
-		p.y = 0.5f * std::sin(time * 0.02f + p.y);
+		//p.x = 0.5f * std::sin(time * 0.02f + p.x);
+		//p.y = 0.5f * std::sin(time * 0.02f + p.y);
 	}
 
-	Uniform<std::vector<glm::vec2>>::bind("Points", ss, points);*/
-	Uniform<float>::bind("Time", ss, time);
+	Uniform<std::vector<glm::vec2>>::bind("Points", ss, points);
+	Uniform<float>::bind("Time", ss, timeCounter);
 	Uniform<float>::bind("VoronoiScale", ss, voronoiScale);
 
 	QUAD_ENTITY->draw();
 
 	FBO->unbind();
+
+	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
 	glClearColor(ss->m_clearColor[0], ss->m_clearColor[1], ss->m_clearColor[2], ss->m_clearColor[3]);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 void DemoVoronoi::render()
 {
+	timeCounter += SceneManager::GetInstance()->delta;
+
 	Entity *e = nullptr;
 	SceneSetting *ss = SceneSetting::GetInstance();
 
@@ -268,7 +272,7 @@ void DemoVoronoi::render()
 		Material::setShaderUniform(e->m_material, ss->m_activeShader, "material");
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, FBO->texture);//m_sceneData->textures[TEXTURE_DIFF_SPHERE]);
+		glBindTexture(GL_TEXTURE_2D, FBO->texture);
 		e->draw();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
