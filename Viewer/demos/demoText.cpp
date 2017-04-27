@@ -56,6 +56,7 @@ static float TEXT_SPACE_HORIZONTAL;
 static float TEXT_COLS = 80;
 static float TEXT_ACCUM_DECAY_SPEED = 1.0f;
 #define DRAW_INTERFERENCE
+#define DRAW_ACCUM
 
 float textSpeed = 50.0f;
 float textInterference = 0.0f;
@@ -325,13 +326,15 @@ float DemoText::updateText(float delta)
 	if (interferenceCycle.isActive(1))
 	{
 		interferenceRatio = interferenceCycle.getRatio();
-		lastInterference = true;
+		this->lastInterference = true;
 	}
-	else if (lastInterference)
+	else if (this->lastInterference)
 	{
-		lastInterference = false;
-		interferenceCycle.timers[0] = Timer(interWaitDistribution(generators[0]));
-		//interferenceCycle.timers[1] = Timer(interApplyDistribution(generators[1]));
+		this->lastInterference = false;
+		interferenceCycle.timers[0] = Timer(this->interWaitDistribution(this->generators[0]));
+		interferenceCycle.timers[1] = Timer(this->interApplyDistribution(this->generators[1]));
+		this->currentEffect = this->effectDistribution(this->generators[2]);
+		std::cerr << this->currentEffect << std::endl;
 	}
 
 	if (textInterference > 0.0f)
@@ -369,7 +372,7 @@ void DemoText::drawText()
 
 	disableFBO(FBO_TEXT);
 }
-void DemoText::drawEffect(float interferenceRatio, int fbo)
+void DemoText::drawEffect(float interferenceRatio, int interferenceEffect, int fbo)
 {
 	enableFBO(fbo);
 
@@ -378,6 +381,7 @@ void DemoText::drawEffect(float interferenceRatio, int fbo)
 	ss->m_activeShader->enable();
 
 	Uniform<float>::bind("InterferenceRatio", ss, interferenceRatio);
+	Uniform<int>::bind("InterferenceEffect", ss, interferenceEffect);
 	Uniform<int>::bind("Frame", ss, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -433,6 +437,7 @@ void DemoText::render()
 	this->accumDecayRatio = std::max(0.0f, this->accumDecayRatio);
 
 	bool effectPeak = this->lastInterference;
+	int effect = this->currentEffect;
 	float interferenceRatio = this->updateText(delta);
 
 #ifndef DRAW_INTERFERENCE
@@ -443,13 +448,13 @@ void DemoText::render()
 	this->drawText();
 
 	// draw interference
-	this->drawEffect(interferenceRatio, FBO_EFFECT);
+	this->drawEffect(interferenceRatio, this->currentEffect, FBO_EFFECT);
 
-#ifdef DRAW_INTERFERENCE
-	if (textInterference == 0.0f && effectPeak && effectPeak != this->lastInterference)
+#ifdef DRAW_ACCUM
+	if (effect == 0 && textInterference == 0.0f && effectPeak && effectPeak != this->lastInterference)
 	{
 		this->accumDecayRatio = 1.0f;
-		this->drawEffect(1.0f, FBO_ACCUM);
+		this->drawEffect(1.0f, effect, FBO_ACCUM);
 	}
 #endif
 

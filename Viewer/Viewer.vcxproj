@@ -288,7 +288,9 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demos\demo7.cpp" />
     <ClCompile Include="demos\demo8.cpp" />
     <ClCompile Include="demos\demo9.cpp" />
+    <ClCompile Include="demos\demoAsteroids.cpp" />
     <ClCompile Include="demos\demoExplode.cpp" />
+    <ClCompile Include="demos\demoGyroscope.cpp" />
     <ClCompile Include="demos\demoSelect.cpp" />
     <ClCompile Include="demos\demoText.cpp" />
     <ClCompile Include="demos\demoVoronoi.cpp" />
@@ -316,6 +318,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="CoreHeaders\entity_Cube_Simple.h" />
     <ClInclude Include="CoreHeaders\entity_Cube_V3C4N3.h" />
     <ClInclude Include="CoreHeaders\entity_GridXY.h" />
+    <ClInclude Include="CoreHeaders\entity_InstancedOBJ.h" />
     <ClInclude Include="CoreHeaders\entity_OBJ.h" />
     <ClInclude Include="CoreHeaders\entity_quad.h" />
     <ClInclude Include="CoreHeaders\entity_SceneOrigin.h" />
@@ -360,7 +363,9 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demos\demo7.h" />
     <ClInclude Include="demos\demo8.h" />
     <ClInclude Include="demos\demo9.h" />
+    <ClInclude Include="demos\demoAsteroids.h" />
     <ClInclude Include="demos\demoExplode.h" />
+    <ClInclude Include="demos\demoGyroscope.h" />
     <ClInclude Include="demos\demoSelect.h" />
     <ClInclude Include="demos\demoText.h" />
     <ClInclude Include="demos\demoVoronoi.h" />
@@ -377,6 +382,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\adsOBJ_v3_n3_t3_displacement.vert" />
     <None Include="Resources\shaders\ads_v3_n3_t3.frag" />
     <None Include="Resources\shaders\ads_v3_n3_t3.vert" />
+    <None Include="Resources\shaders\asteroids.frag" />
+    <None Include="Resources\shaders\asteroids.vert" />
     <None Include="Resources\shaders\blend_v3_n3_t3.frag" />
     <None Include="Resources\shaders\const_v3_n3_t3.frag" />
     <None Include="Resources\shaders\const_v3_n3_t3.vert" />
