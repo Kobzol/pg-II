@@ -17,6 +17,8 @@ public:
 	void unbind();
 
 	void createAttachments(int width, int height);
+	void createDepthAttachment(int width, int height);
+
 	void setViewport();
 
 private:

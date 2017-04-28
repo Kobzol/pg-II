@@ -292,6 +292,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demos\demoExplode.cpp" />
     <ClCompile Include="demos\demoGyroscope.cpp" />
     <ClCompile Include="demos\demoSelect.cpp" />
+    <ClCompile Include="demos\demoShadows.cpp" />
     <ClCompile Include="demos\demoText.cpp" />
     <ClCompile Include="demos\demoToon.cpp" />
     <ClCompile Include="demos\demoVoronoi.cpp" />
@@ -368,6 +369,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demos\demoExplode.h" />
     <ClInclude Include="demos\demoGyroscope.h" />
     <ClInclude Include="demos\demoSelect.h" />
+    <ClInclude Include="demos\demoShadows.h" />
     <ClInclude Include="demos\demoText.h" />
     <ClInclude Include="demos\demoToon.h" />
     <ClInclude Include="demos\demoVoronoi.h" />
@@ -394,6 +396,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\gooch_v3_n3_t3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.frag" />
     <None Include="Resources\shaders\lambert_v3_c4_n3.vert" />
+    <None Include="Resources\shaders\lightshadow.frag" />
+    <None Include="Resources\shaders\lightshadow.vert" />
     <None Include="Resources\shaders\normal_mapping.frag" />
     <None Include="Resources\shaders\normal_mapping.vert" />
     <None Include="Resources\shaders\parallax_mapping.frag" />
@@ -406,6 +410,8 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\quad_text_blend.frag" />
     <None Include="Resources\shaders\quad_voronoi.frag" />
     <None Include="Resources\shaders\quad_text_interference.frag" />
+    <None Include="Resources\shaders\shadow_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\shadow_v3_n3_t3.vert" />
     <None Include="Resources\shaders\simple_v3_c4.frag" />
     <None Include="Resources\shaders\simple_v3_c4.vert" />
     <None Include="Resources\shaders\ads_v3_c4_n3_t2.frag" />
