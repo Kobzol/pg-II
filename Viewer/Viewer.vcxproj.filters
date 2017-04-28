@@ -34,6 +34,7 @@
     <ClCompile Include="code\cycle.cpp" />
     <ClCompile Include="demos\demoAsteroids.cpp" />
     <ClCompile Include="demos\demoGyroscope.cpp" />
+    <ClCompile Include="demos\demoToon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demos.h">
@@ -177,6 +178,7 @@
     <ClInclude Include="demos\demoAsteroids.h" />
     <ClInclude Include="CoreHeaders\entity_InstancedOBJ.h" />
     <ClInclude Include="demos\demoGyroscope.h" />
+    <ClInclude Include="demos\demoToon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\simple_v3_c4.vert" />
@@ -216,5 +218,6 @@
     <None Include="Resources\shaders\quad_text_interference.frag" />
     <None Include="Resources\shaders\asteroids.vert" />
     <None Include="Resources\shaders\asteroids.frag" />
+    <None Include="Resources\shaders\toon_v3_n3_t3.frag" />
   </ItemGroup>
 </Project>

@@ -19,9 +19,13 @@
 #include "demos/demoVoronoi.h"
 #include "demos/demoAsteroids.h"
 #include "demos/demoGyroscope.h"
+#include "demos/demoToon.h"
 
 //#define LOAD_DEMO DemoSelect(m_sceneData)
 
-#define DEMOS(data) { new DemoText(data), new DemoSelect(data), new DemoVoronoi(data), new DemoAsteroids(data), new DemoGyroscope(data), new DemoExplode(data) }
+#define DEMOS(data) { \
+	new DemoText(data), new DemoSelect(data), new DemoVoronoi(data), new DemoToon(data), \
+	new DemoAsteroids(data), new DemoGyroscope(data), new DemoExplode(data) \
+}
 
 #endif

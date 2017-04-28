@@ -293,6 +293,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClCompile Include="demos\demoGyroscope.cpp" />
     <ClCompile Include="demos\demoSelect.cpp" />
     <ClCompile Include="demos\demoText.cpp" />
+    <ClCompile Include="demos\demoToon.cpp" />
     <ClCompile Include="demos\demoVoronoi.cpp" />
     <ClCompile Include="mouse.cpp" />
     <ClCompile Include="program.cpp" />
@@ -368,6 +369,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <ClInclude Include="demos\demoGyroscope.h" />
     <ClInclude Include="demos\demoSelect.h" />
     <ClInclude Include="demos\demoText.h" />
+    <ClInclude Include="demos\demoToon.h" />
     <ClInclude Include="demos\demoVoronoi.h" />
     <ClInclude Include="gl_util.h" />
     <ClInclude Include="mouse.h" />
@@ -413,6 +415,7 @@ copy "$(ANTTWEAKBAR_BIN)\*.dll" "$(OutDir)"</Command>
     <None Include="Resources\shaders\text.frag" />
     <None Include="Resources\shaders\text.vert" />
     <None Include="Resources\shaders\texture_v3_n3_t3.frag" />
+    <None Include="Resources\shaders\toon_v3_n3_t3.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
