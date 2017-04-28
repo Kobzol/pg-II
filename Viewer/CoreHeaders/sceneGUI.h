@@ -87,7 +87,7 @@ inline TwBar* SceneGUI::createBar()
 	TwAddVarRW(bar, "TextSpeed", TW_TYPE_FLOAT, &textSpeed, " min=1.0 max=250.0 step=10.0 label='Text speed' ");
 	TwAddVarRW(bar, "TextInterference", TW_TYPE_FLOAT, &textInterference, " min=0.0 max=4.0 step=0.1 label='Text interference' ");
 
-	TwAddVarRW(bar, "ActiveDemo", TW_TYPE_UINT32, &activeDemo, " min=0 max=4 step=1 label='Active demo'");
+	TwAddVarRW(bar, "ActiveDemo", TW_TYPE_UINT32, &activeDemo, " min=0 max=6 step=1 label='Active demo'");
 
 	return bar;
 }

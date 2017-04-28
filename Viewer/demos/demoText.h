@@ -28,12 +28,14 @@ private:
 		
 	}
 
-	void renderText(const TextColumn& text, float x, float y, float scale, float space);
+	void renderText(float interferenceRatio, const TextColumn& text, int column, float x, float y, float scale, float space);
 	float updateText(float delta);
 
-	void drawText();
+	void drawText(float interferenceRatio);
 	void drawEffect(float interferenceRatio, int interferenceEffect, int fbo);
 	void drawScreen(float delta);
+
+	bool willSwitch();
 
 	default_random_engine generators[3];
 	uniform_real_distribution<float> interWaitDistribution{ 2.0f, 3.5f };

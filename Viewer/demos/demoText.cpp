@@ -47,6 +47,7 @@ static int FBO_TEXT = 0;
 static int FBO_EFFECT = 1;
 static int FBO_ACCUM = 2;
 static TextGenerator* textGenerator;
+static Cycle interferenceCycle{ 2.0f, 0.4f };
 
 const int TEXT_HEIGHT = 1024;
 const int TEXT_WIDTH = TEXT_HEIGHT;
@@ -55,13 +56,14 @@ static float TEXT_SPACE_VERTICAL;
 static float TEXT_SPACE_HORIZONTAL;
 static float TEXT_COLS = 80;
 static float TEXT_ACCUM_DECAY_SPEED = 1.0f;
+static std::vector<std::vector<std::pair<float, float>>> textHighlight;
+
 #define DRAW_INTERFERENCE
 #define DRAW_ACCUM
 
 float textSpeed = 50.0f;
 float textInterference = 0.0f;
 
-static Cycle interferenceCycle{ 2.0f, 0.4f };
 
 void DemoText::initShaders()
 {
@@ -237,6 +239,141 @@ void DemoText::initFonts()
 	TEXT_SPACE_VERTICAL = TEXT_HEIGHT / (55.0f * TEXT_SCALE);
 	TEXT_SPACE_HORIZONTAL = (TEXT_WIDTH / TEXT_COLS);
 	textGenerator = new TextGenerator(TEXT_COLS, TEXT_HEIGHT, TEXT_SPACE_VERTICAL / 4.0f);
+
+	textHighlight = std::vector<std::vector<std::pair<float, float>>>(TEXT_WIDTH);
+	
+	float h = TEXT_HEIGHT;
+	for (int i = 0; i < TEXT_WIDTH; i++)
+	{
+		textHighlight[i] = { std::make_pair(0.0f, 0.0f) };
+	}
+
+	int i = 10;
+	int j = 0;
+	int start;
+	float ceiling = 0.3f;
+	float y = ceiling;
+	float length = 0.2f;
+	int widthSpace = 3;
+
+#pragma region Letter M
+	for (j = i; j < i + 2; j++)
+	{
+		textHighlight[j] = { std::make_pair(h * y, h * (y + length)) };
+	}
+	i = j;
+
+	for (j = i; j < i + 4; j++)
+	{
+		y += 0.02f;
+		textHighlight[j] = { std::make_pair(h * y, h * (y + 0.05f)) };
+	}
+	i = j;
+
+	for (j = i; j < i + 4; j++)
+	{
+		y -= 0.02f;
+		textHighlight[j] = { std::make_pair(h * y, h * (y + 0.05f)) };
+	}
+	i = j;
+
+	for (j = i; j < i + 2; j++)
+	{
+		textHighlight[j] = { std::make_pair(h * y, h * (y + length)) };
+	}
+	i = j + widthSpace;
+#pragma endregion
+#pragma region Letter A
+	start = i + 1;
+	y = ceiling + (length - 0.04f);
+	for (j = i; j < i + 4; j++)
+	{
+		textHighlight[j] = { std::make_pair(h * y, h * (y + 0.04f)) };
+		y -= 0.05f;
+	}
+	i = j;
+	y = ceiling;
+	for (j = i; j < i + 4; j++)
+	{
+		textHighlight[j] = { std::make_pair(h * y, h * (y + 0.04f)) };
+		y += 0.05f;
+	}
+
+	for (int x = start; x < start + 7; x++)
+	{
+		textHighlight[x].push_back(std::make_pair(h * (ceiling + length / 2.0f), h * (ceiling + length / 2.0f + 0.025f)));
+	}
+
+	i = j + widthSpace;
+	y = ceiling;
+#pragma endregion
+#pragma region Letter T
+	for (j = i; j < i + 7; j++)
+	{
+		float size = 0.03f;
+		if (j >= i + 3 && j <= i + 4)
+		{
+			size = length;
+		}
+		textHighlight[j] = { std::make_pair(h * y, h * (y + size)) };
+	}
+	i = j + 2;
+#pragma endregion
+#pragma region Letter R
+	start = i;
+	textHighlight[i++] = { std::make_pair(h * y, h * (y + length)) };
+
+	// up
+	for (int x = start; x < start + 6; x++)
+	{
+		textHighlight[x].push_back(std::make_pair(h * (ceiling), h * (ceiling + 0.025f)));
+	}
+
+	// middle
+	for (int x = start; x < start + 6; x++)
+	{
+		textHighlight[x].push_back(std::make_pair(h * (ceiling + length / 2.0f), h * (ceiling + length / 2.0f + 0.025f)));
+	}
+
+	// right
+	textHighlight[start + 5] = { std::make_pair(h * ceiling, h * (ceiling + length / 2.0f)) };
+	
+	y = ceiling + length / 2.0f;
+	for (int x = start + 3; x < start + 7; x++)
+	{
+		textHighlight[x].push_back(std::make_pair(h * y, h * (y + 0.03f)));
+		y += 0.02f;
+	}
+	i = start + 7 + widthSpace;
+	y = ceiling;
+#pragma endregion
+#pragma region Letter I
+	i += 3;
+	
+	textHighlight[i++] = { std::make_pair(h * y, h * (y + length)) };
+	textHighlight[i++] = { std::make_pair(h * y, h * (y + length)) };
+
+	i += widthSpace;
+#pragma endregion
+#pragma region Letter X
+	start = i;
+
+	// diagonal up right
+	y = ceiling + (length - 0.04f);
+	for (int x = start; x < start + 9; x++)
+	{
+		textHighlight[x] = { std::make_pair(h * y, h * (y + 0.04f)) };
+		y -= 0.02f;
+	}
+
+	// diagonal down right
+	y = ceiling;
+	for (int x = start; x < start + 9; x++)
+	{
+		textHighlight[x].push_back(std::make_pair(h * y, h * (y + 0.04f)));
+		y += 0.02f;
+	}
+#pragma endregion
 }
 
 void DemoText::initFBOs()
@@ -250,8 +387,10 @@ void DemoText::initFBOs()
 	}
 }
 
-void DemoText::renderText(const TextColumn& text, float x, float y, float scale, float space)
+void DemoText::renderText(float interferenceRatio, const TextColumn& text, int column, float x, float y, float scale, float space)
 {
+	interferenceRatio = 1.0f;
+
 	SceneSetting *ss = SceneSetting::GetInstance();
 	Camera* camera = ss->m_activeCamera;
 	ss->m_activeCamera = ORTHO_CAMERA;
@@ -281,6 +420,19 @@ void DemoText::renderText(const TextColumn& text, float x, float y, float scale,
 			GLfloat xpos = x + ch.Bearing.x * scale;
 			GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
+			glm::vec3 color = c.color;
+			if (interferenceRatio > 0.0f)
+			{
+				float invertedY = TEXT_HEIGHT - y;
+				for (auto& passage : textHighlight[column])
+				{
+					if (invertedY >= passage.first && invertedY <= passage.second)
+					{
+						color = glm::vec3(1.0f, 1.0f, 1.0f) * interferenceRatio;
+					}
+				}
+			}
+
 			GLfloat w = ch.Size.x * scale;
 			GLfloat h = ch.Size.y * scale;
 			// Update VBO for each character
@@ -301,7 +453,7 @@ void DemoText::renderText(const TextColumn& text, float x, float y, float scale,
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			Uniform<float>::bind("TextAlpha", ss, c.alpha);
-			Uniform<glm::vec3>::bind("TextColor", ss, c.color);
+			Uniform<glm::vec3>::bind("TextColor", ss, color);
 
 			// Render quad
 			glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -359,14 +511,15 @@ static void disableFBO(int fbo)
 	glViewport(0, 0, ss->m_screen[0], ss->m_screen[1]);
 }
 
-void DemoText::drawText()
+void DemoText::drawText(float interferenceRatio)
 {
 	enableFBO(FBO_TEXT);
 
 	float x = 0.0f;
-	for (auto& col : textGenerator->matrix)
+	for (size_t i = 0; i < textGenerator->matrix.size(); i++)
 	{
-		renderText(col, x, TEXT_HEIGHT - col.y, TEXT_SCALE, TEXT_SPACE_VERTICAL);
+		auto& col = textGenerator->matrix[i];
+		renderText(interferenceRatio, col, i, x, TEXT_HEIGHT - col.y, TEXT_SCALE, TEXT_SPACE_VERTICAL);
 		x += TEXT_SPACE_HORIZONTAL;
 	}
 
@@ -412,6 +565,10 @@ void DemoText::drawScreen(float delta)
 	ENTITY_QUAD->draw();
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+bool DemoText::willSwitch()
+{
+	return interferenceCycle.isActive(0) && this->lastInterference;
+}
 
 void DemoText::render()
 {
@@ -436,8 +593,15 @@ void DemoText::render()
 	this->accumDecayRatio -= delta * TEXT_ACCUM_DECAY_SPEED;
 	this->accumDecayRatio = std::max(0.0f, this->accumDecayRatio);
 
-	bool effectPeak = this->lastInterference;
-	int effect = this->currentEffect;
+	bool shouldSwitch = this->willSwitch();
+#ifdef DRAW_ACCUM
+	if (this->currentEffect == 0 && textInterference == 0.0f && shouldSwitch)
+	{
+		this->accumDecayRatio = 1.0f;
+		this->drawEffect(1.0f, this->currentEffect, FBO_ACCUM);
+	}
+#endif
+
 	float interferenceRatio = this->updateText(delta);
 
 #ifndef DRAW_INTERFERENCE
@@ -445,18 +609,10 @@ void DemoText::render()
 #endif
 
 	// draw text
-	this->drawText();
+	this->drawText(interferenceRatio);
 
 	// draw interference
 	this->drawEffect(interferenceRatio, this->currentEffect, FBO_EFFECT);
-
-#ifdef DRAW_ACCUM
-	if (effect == 0 && textInterference == 0.0f && effectPeak && effectPeak != this->lastInterference)
-	{
-		this->accumDecayRatio = 1.0f;
-		this->drawEffect(1.0f, effect, FBO_ACCUM);
-	}
-#endif
 
 	// draw screen
 	this->drawScreen(delta);

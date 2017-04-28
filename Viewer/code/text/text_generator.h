@@ -66,7 +66,7 @@ public:
 private:
 	std::default_random_engine generators[6];
 	std::uniform_int_distribution<int> charDistribution{ 48, 126 };
-	std::uniform_real_distribution<float> sentenceLengthDistribution{ 15.0f, 45.0f };
+	std::uniform_real_distribution<float> sentenceLengthDistribution{ 25.0f, 60.0f };
 	std::uniform_int_distribution<int> spawnColumnDistribution{ 0, 100 };
 	std::uniform_real_distribution<float> verticalOffsetDistribution;
 	std::uniform_int_distribution<int> flipCharacterDistribution{ 0, 100 };
